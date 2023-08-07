@@ -26,7 +26,9 @@
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
         let priorY=0;
-        var color = "black";
+        let color = "black";
+        let excessAccel=0;
+        
 
         function drawDot(x, y, color, text) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -48,11 +50,24 @@
             
             if (event.acceleration.y > threshold && priorY <= threshold) {
                 color="red";
+                excessAccel=0;
             } 
             if (event.acceleration.y < -threshold && priorY >= -threshold) {
                 color="blue";
+                excessAccel=0;
             }
-            drawDot(x, y, color, "hi")
+
+             //compute excess acceleration after the threshold has been met
+            if (event.acceleration.y > threshold) {
+                excessAccel += event.acceleration.y - priorY;
+            }
+            if (event.acceleration.y < -threshold) {
+                excessAccel += event.acceleration.y - priorY;
+            }
+            //format the excess acceleration to 2 decimal places
+            printExcess = excessAccel.toFixed(2);
+            //printExcess = event.acceleration.y.toFixed(2);
+            drawDot(x, y, color, printExcess)
             priorY = acceleration.y;
         }
 
