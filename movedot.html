@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moving Dot with Device Motion</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas"></canvas>
+
+    <script>
+        const threshold = 2; // if we see movement greater than this, it indicates the bicycle has started or stopped moving
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        let priorY=0;
+        var color = "black";
+
+        function drawDot(x, y, color, text) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.font = '20px Arial';
+            ctx.fillStyle = color;
+            //ctx.arc(x, y, dotSize, 0, 2 * Math.PI);
+            ctx.fillText(text, x, y);
+            ctx.fill();
+        }
+
+        function moveDot(event) {
+            // Map acceleration values to canvas coordinates
+            const x = (event.acceleration.x + 10) * canvas.width / 20;
+            const y = (10 - event.acceleration.y) * canvas.height / 20;
+
+            // Map z (size) value to dot size
+            dotSize = Math.max(1, Math.min(20, 10 + (event.acceleration.z * 6)));
+            
+            if (event.acceleration.y > threshold && priorY <= threshold) {
+                color="red";
+            } 
+            if (event.acceleration.y < -threshold && priorY >= -threshold) {
+                color="blue";
+            }
+            drawDot(x, y, color, "hi")
+            priorY = acceleration.y;
+        }
+
+        window.addEventListener('devicemotion', moveDot);
+
+        // Resize canvas to fit the window size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    </script>
+</body>
+</html>

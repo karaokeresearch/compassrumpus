@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Compass Rumpus</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: row;
+        }
+
+        #frequencyDisplay {
+            background-color: pink;
+            font-size: 20px;
+            width: 50%;
+            height: 100%;
+            cursor: pointer;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+
+        #bearing{
+            background-color: orange;
+            font-size: 20px;
+            width: 50%;
+            height: 100%;
+            cursor: pointer;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+    </style>
+</head>
+<body>
+    <div id="frequencyDisplay" onmousedown="button1()">tap here to start</div>
+    <div id="bearing"  ontouchstart="playTone(0)" ontouchend="stopTone()"></div>
+    <script src="script.js"></script>
+
+    
+</body>
+</html>
