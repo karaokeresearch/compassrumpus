@@ -28,6 +28,7 @@
         let priorY=0;
         let color = "black";
         let excessAccel=0;
+        let direction="none";
         
 
         function drawDot(x, y, color, text) {
@@ -36,6 +37,10 @@
             ctx.font = '20px Arial';
             ctx.fillStyle = color;
             //ctx.arc(x, y, dotSize, 0, 2 * Math.PI);
+            //convert text to a string
+            //text = text.toString();
+         
+            
             ctx.fillText(text, x, y);
             ctx.fill();
         }
@@ -51,24 +56,26 @@
             if (event.acceleration.y > threshold && priorY <= threshold) {
                 color="red";
                 excessAccel=0;
+                direction="positive"
             } 
             if (event.acceleration.y < -threshold && priorY >= -threshold) {
                 color="blue";
                 excessAccel=0;
+                direction="negative"
             }
 
              //compute excess acceleration after the threshold has been met
-            if (event.acceleration.y > threshold) {
+            if (direction=="positive" && event.acceleration.y > priorY) {
                 excessAccel += event.acceleration.y - priorY;
             }
-            if (event.acceleration.y < -threshold) {
+            if (direction=="negative" && event.acceleration.y < priorY) {
                 excessAccel += event.acceleration.y - priorY;
             }
             //format the excess acceleration to 2 decimal places
             printExcess = excessAccel.toFixed(2);
             //printExcess = event.acceleration.y.toFixed(2);
             drawDot(x, y, color, printExcess)
-            priorY = acceleration.y;
+            priorY = event.acceleration.y;
         }
 
         window.addEventListener('devicemotion', moveDot);
