@@ -19,19 +19,46 @@
     </style>
 </head>
 <body>
-    <canvas id="myCanvas"></canvas>
+    <script src="howler.min.js"></script>
+    <canvas id="myCanvas" onclick="tapScreen()"></canvas>
 
     <script>
-        const threshold = 2; // if we see movement greater than this, it indicates the bicycle has started or stopped moving
+        //if the threshold querystring param is provided, use that instead
+        const urlParams = new URLSearchParams(window.location.search);
+        const threshold = urlParams.get('threshold') || 2; // if we see movement greater than this, it indicates the bicycle has started or stopped moving
+
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
         let priorY=0;
         let color = "black";
         let excessAccel=0;
         let direction="none";
+        let started=false;
+        let sound = "";
         
+        function tapScreen(){
+            console.log("start sound")
+            if (started==false){
+                if (sound == "") {//first time
+                    sound = new Howl({
+                        src: ['6.wav'],
+                        loop: true,
+                        autoplay: false,
+                        volume: 0.5  // Start with volume set to 0
+                    });
+                }
+                sound.play();
+                started=true;
+            }
+            else{
+                sound.stop();
+                console.log("already playing. stopping");
+                started=false;
+            }
+            
+        }
 
-        function drawDot(x, y, color, text) {
+        function drawText(x, y, color, text) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.beginPath();
             ctx.font = '20px Arial';
@@ -44,6 +71,7 @@
             ctx.fillText(text, x, y);
             ctx.fill();
         }
+    
 
         function moveDot(event) {
             // Map acceleration values to canvas coordinates
@@ -71,10 +99,20 @@
             if (direction=="negative" && event.acceleration.y < priorY) {
                 excessAccel += event.acceleration.y - priorY;
             }
+            //if printExcess > 10 or < -10, then cap them at those values
+            if (excessAccel > 10) {
+                excessAccel = 10;
+            }
+            if (excessAccel < -10) {
+                excessAccel = -10;
+            }
+
+            volume = 1- ((excessAccel + 10)/20); //set volume to a value between 0 and 1
             //format the excess acceleration to 2 decimal places
             printExcess = excessAccel.toFixed(2);
             //printExcess = event.acceleration.y.toFixed(2);
-            drawDot(x, y, color, printExcess)
+            drawText(x, y, color, volume.toFixed(2));
+            sound.volume(volume);
             priorY = event.acceleration.y;
         }
 
@@ -83,6 +121,8 @@
         // Resize canvas to fit the window size
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+
+
     </script>
 </body>
 </html>
