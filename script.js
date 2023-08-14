@@ -95,27 +95,32 @@ function stopTone() {
   
   // Check for DeviceOrientation API support
 if ('DeviceOrientationEvent' in window) {
-  window.addEventListener('deviceorientation', handleOrientation);
+  window.addEventListener('deviceorientationabsolute', handleOrientation);
 } else {
   alert('DeviceOrientationEvent is not supported on this browser.');
 }
 
 let bearing=0;
+let rawBearing=0;
 let oldBearing=0;
 function handleOrientation(event) {
-  // Check if alpha (compass direction) is available
-  if (event.alpha !== null) {
-    bearing = 360-event.alpha;
+// Check if alpha (compass direction) is available
     
-    // Round the bearing to an integer
-    prettyBearing = Math.round(bearing);
 
-    // Update the display
-    const bearingElement = document.getElementById('bearing');
-    //bearingElement.textContent = prettyBearing + '° MusicOn: ' + musicOn;
-    if (musicOn){
-        playTone(bearing);
-    }
+  bearing = 360 - event.alpha;
+
+  rawBearing=event.alpha;
+  // Round the bearing to an integer
+  prettyBearing = Math.round(bearing);
+  const bearingElement = document.getElementById('bearing');
+  bearingElement.innerHTML = bearing;
+  
+
+  // Update the display
+  //const bearingElement = document.getElementById('bearing');
+  //bearingElement.textContent = prettyBearing + '° MusicOn: ' + musicOn;
+  if (musicOn){
+      playTone(bearing);
   }
 }
 
@@ -127,17 +132,17 @@ setInterval(function(){
   }
   
   if (bearing > 127 && oldBearing <= 127) {
-    bearing = 360 - bearing;
+    newBearing = 360 - newBearing;
+  }
+  else{
+    newBearing = bearing;
   }
 
-  bearingChange = Math.abs(bearing-oldBearing) 
+  bearingChange = Math.abs(newBearing-oldBearing) 
   if (bearingChange>=threshold){
     movement=true;
     console.log("bearing change: " + (bearing-oldBearing));
-    const bearingElement = document.getElementById('bearing');
-    //bearingElement.textContent = prettyBearing + '° MusicOn: ' + musicOn;
-    bearingElement.innerHTML = bearing + "<br>" + oldBearing +"<br>"+ bearingChange + "<br>" + threshold;
-  }else{
+    }else{
     movement=false;
   }
   oldBearing=bearing;
