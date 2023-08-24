@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Howdy North</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: row;
+        }
+
+        #frequencyDisplay {
+            background-color: peachpuff;
+            font-size: 20px;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+
+        #slider{
+            background-color: orange;
+            width: 100%;
+        }
+    
+    </style>
+</head>
+<body>
+    <div id="frequencyDisplay" onmousedown="button1()">tap here to start
+    <br><br>
+    <!--a slider that goes from 0 to 1000-->
+    <input type="range" min="0" max="1000" value="360" class="slider" id="slider">
+
+    <span id="console">360</span>
+    </div>
+    <script src="howler.min.js"></script>
+    <script src="north.js"></script>
+    
+
+    
+</body>
+</html>
