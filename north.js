@@ -1,6 +1,11 @@
 chordVolume=0.03
 
 
+files=[{"filename":"6.wav", pitch=430},
+      {"filename":"organ.wav", pitch=440},
+      {"filename":"northyelp.wav", pitch=423.2511306},
+      ]
+
 sound=[];
 started=false;
 noteOffsets=[];
@@ -57,7 +62,7 @@ function button1() {
      for (i = 0; i < chordRates.length; i++) { 
        sound[i].rate(chordRates[i] * modulation); 
      }
-     terriblecompass.style.transform = `rotate(${modulus}deg)`
+     terriblecompass.style.transform = `rotate(${360-modulus}deg)`
 
      hertz = 440 * modulation;
     //for the highest element in sound[]: the volume should decrease to 0 as the slider value approaches 360
