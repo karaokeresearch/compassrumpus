@@ -1,16 +1,30 @@
-chordVolume=0.03
+let chordVolume=0.01
 
+let chordFile="organA.wav";
 
-files=[{"filename":"6.wav", pitch=430},
-      {"filename":"organ.wav", pitch=440},
-      {"filename":"northyelp.wav", pitch=423.2511306},
-      ]
+portladDeclination = 15.8333333
+
+//format is file, hertz after adjustment, cent adjustment
+let files={
+      "6.wav": {rate:440, centAdjustment:40},
+      "organA.wav":{rate: 440, centAdjustment: 0 },
+      "northyelp.wav": {rate: 423.2511306, centAdjustment: 0},
+      };
+
+let chordPitchShiftFactor = 1;
+
+// if files[chordFile] has a centAdjustment, then we need to adjust the rate
+if (files[chordFile].centAdjustment) {
+  chordPitchShiftFactor = 2 ** (files[chordFile].centAdjustment / 1200); // 1200 cents in an octave
+}
+  
 
 sound=[];
 started=false;
 noteOffsets=[];
 const terriblecompass = document.getElementById("terriblecompass");
 
+//first let's define the base chord. Below is a major chord
 for (i = 0; i < 13; i++) {
   noteOffsets.push(((2**(1/12))**i)); //this has to do with equal temprament
 }
@@ -23,6 +37,8 @@ for (i = 0; i < baseChordRates.length; i++) {
   chordRates.push(baseChordRates[i]/4);
   chordRates.push(baseChordRates[i]/2);
   chordRates.push(baseChordRates[i]);
+  chordRates.push(baseChordRates[i]*2);
+  chordRates.push(baseChordRates[i]*4);
   //chordRates.push(baseChordRates[i]*2);
    
 }
@@ -35,11 +51,11 @@ function button1() {
 
     for (i = 0; i < chordRates.length; i++) {
       sound[i] = new Howl({
-        src: ["6.wav"],
+        src: [chordFile],
         autoplay: true,
         loop: true,
-        rate: chordRates[i],
-        volume: 0.03,
+        rate: chordRates[i] * chordPitchShiftFactor,
+        volume: chordVolume,
       });
     }   
     started = true;   
@@ -60,11 +76,13 @@ function button1() {
      //instead let's do an equal-tempered version
      modulation = 2 ** (modulus / 360 )
      for (i = 0; i < chordRates.length; i++) { 
-       sound[i].rate(chordRates[i] * modulation); 
+       sound[i].rate(chordRates[i] * modulation * chordPitchShiftFactor); 
      }
      terriblecompass.style.transform = `rotate(${360-modulus}deg)`
 
      hertz = 440 * modulation;
+
+    //ILLUSION CREATED HERE
     //for the highest element in sound[]: the volume should decrease to 0 as the slider value approaches 360
     //likewise the lowest element in sound[]: the volume should increase to 1 as the slider value approaches 360
     fade =modulus/360;
