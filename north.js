@@ -1,6 +1,7 @@
 let chordVolume=0.01
 
 let chordFile="organA.wav";
+let stingerFile="north01.wav"
 
 portladDeclination = 15.8333333
 
@@ -8,7 +9,7 @@ portladDeclination = 15.8333333
 let files={
       "6.wav": {rate:440, centAdjustment:40},
       "organA.wav":{rate: 440, centAdjustment: 0 },
-      "northyelp.wav": {rate: 423.2511306, centAdjustment: 0},
+      "north01.wav": {rate: 440, centAdjustment: 0},
       };
 
 let chordPitchShiftFactor = 1;
@@ -17,7 +18,13 @@ let chordPitchShiftFactor = 1;
 if (files[chordFile].centAdjustment) {
   chordPitchShiftFactor = 2 ** (files[chordFile].centAdjustment / 1200); // 1200 cents in an octave
 }
-  
+
+
+function muteUnmuteAllSounds(){
+  for (i = 0; i < sound.length; i++) {
+    sound[i].mute(!sound[i]._muted);
+  }
+}
 
 sound=[];
 started=false;
@@ -62,10 +69,34 @@ function button1() {
   }
 
 
+
  }
 
- const slider = document.getElementById("slider");
 
+
+ 
+let stinger=[];
+
+stinger[0] = new Howl({
+  src: [stingerFile],
+  autoplay: false,
+  loop: false,
+  volume: 1,
+});
+
+function playStinger(chordPos){
+  //play a single note
+    i = chordPos;
+    console.log(baseChordRates[i], modulation ,chordPitchShiftFactor)
+    console.log(baseChordRates[i] * modulation * chordPitchShiftFactor)
+    stinger[0].rate(baseChordRates[i] * modulation * chordPitchShiftFactor);
+    stinger[0].play();
+  }
+
+
+
+const slider = document.getElementById("slider");
+modulation=0;
  // Add an event listener to monitor changes in the slider's value
  slider.addEventListener("input", function() {
      const sliderValue = this.value;
