@@ -77,23 +77,41 @@ function button1() {
  
 let stinger=[];
 
-stinger[0] = new Howl({
-  src: [stingerFile],
-  autoplay: false,
-  loop: false,
-  volume: 1,
-});
+for (i = 0; i < baseChordRates.length; i++) {
+  stinger[i] = new Howl({
+    src: [stingerFile],
+    autoplay: false,
+    loop: false,
+    volume: 1,
+  });
+}
 
 function playStinger(chordPos){
   //play a single note
     i = chordPos;
     console.log(baseChordRates[i], modulation ,chordPitchShiftFactor)
     console.log(baseChordRates[i] * modulation * chordPitchShiftFactor)
-    stinger[0].rate(baseChordRates[i] * modulation * chordPitchShiftFactor);
-    stinger[0].play();
+    stinger[chordPos].rate(baseChordRates[i] * modulation * chordPitchShiftFactor);
+    stinger[chordPos].play();
   }
 
 
+function compassDirectionToSpecificName(direction) {
+  // Define the cardinal and intermediate directions
+  const directions = [
+    "N", "NNE", "NE", "ENE",
+    "E", "ESE", "SE", "SSE",
+    "S", "SSW", "SW", "WSW",
+    "W", "WNW", "NW", "NNW"
+  ];
+
+  // Calculate the index based on the direction
+  const index = Math.round(((direction % 360) / 22.5)) % 16;
+
+  // Get the specific direction name
+  return directions[index];
+}
+  
 
 const slider = document.getElementById("slider");
 modulation=0;
