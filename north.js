@@ -6,6 +6,17 @@ let stingerFile="north01.wav"
 
 portladDeclination = 15.8333333
 
+
+
+
+let debug=false
+//if querystring contains debug=true then set the innerHTML of sliderContainer to this: '<input type="range" min="0" max="1000" value="360" class="slider" onmousedown="button1()" id="slider">'
+if (window.location.search.includes("debug=true")) {
+  document.getElementById("sliderContainer").innerHTML = '<input type="range" min="0" max="1000" value="360" class="slider" onmousedown="button1()" id="slider">';
+  debug=true
+}
+
+
 //format is file, degree at which it's meant to be played, cent adjustment
 let files={
       "6.wav": {position:0, centAdjustment:40},
@@ -203,58 +214,91 @@ function compassDirectionToSpecificName(direction) {
 }
   
 
-const slider = document.getElementById("slider");
+function directionChanged(modulus){
+  const HTMLconsole = document.getElementById("console");
+  
+  
+  //modulation = modulus / 360 + 1; // old, non-equal-tempered version
+  //instead let's do an equal-tempered version
+  let modulation = 2 ** (modulus / 360 )
+  for (i = 0; i < chordRates.length; i++) { 
+    sound[i].rate(chordRates[i] * modulation * chordPitchShiftFactor); 
+  }
+  terriblecompass.style.transform = `rotate(${360-modulus}deg)`
 
-sliderValue=0;
- // Add an event listener to monitor changes in the slider's value
- slider.addEventListener("input", function() {
-     sliderValue = this.value;
-     const HTMLconsole = document.getElementById("console");
-     
-     modulus = sliderValue % 360;
-     //modulation = modulus / 360 + 1; // old, non-equal-tempered version
-     //instead let's do an equal-tempered version
-     let modulation = 2 ** (modulus / 360 )
-     for (i = 0; i < chordRates.length; i++) { 
-       sound[i].rate(chordRates[i] * modulation * chordPitchShiftFactor); 
-     }
-     terriblecompass.style.transform = `rotate(${360-modulus}deg)`
+  hertz = 440 * modulation;
 
-     hertz = 440 * modulation;
+  //ILLUSION CREATED HERE
+  //for the highest element in sound[]: the volume should decrease to 0 as the slider value approaches 360
+  //likewise the lowest element in sound[]: the volume should increase to 1 as the slider value approaches 360
+  fade =modulus/360;
 
-    //ILLUSION CREATED HERE
-    //for the highest element in sound[]: the volume should decrease to 0 as the slider value approaches 360
-    //likewise the lowest element in sound[]: the volume should increase to 1 as the slider value approaches 360
-    fade =modulus/360;
+  for (i = 0; i < baseChordRates.length; i++) {
+    sound[i].volume(chordVolume * fade);
+  }
 
-    for (i = 0; i < baseChordRates.length; i++) {
-      sound[i].volume(chordVolume * fade);
+  //now let's do the same with the top three sounds in the array
+  for (i = sound.length-baseChordRates.length; i < sound.length; i++) {
+    sound[i].volume(chordVolume * (1- fade));
+  }
+
+
+  allVolumesHTML=""
+  for (i = 0; i < sound.length; i++) {
+    allVolumesHTML+=sound[i]._volume+"<br>";
+  }
+  HTMLconsole.innerHTML = modulus + "°";
+  let finalDirection = compassDirectionToSpecificName(modulus);
+  let letter=[];
+  letter[0] = document.getElementById("letter0");
+  letter[1] = document.getElementById("letter1");
+  letter[2] = document.getElementById("letter2");
+  for (i = 0; i < 3; i++) {
+    if (i < finalDirection.length) {
+      letter[i].innerHTML = finalDirection[i];
+    } else {
+      letter[i].innerHTML = "&nbsp;";
     }
-
-    //now let's do the same with the top three sounds in the array
-    for (i = sound.length-baseChordRates.length; i < sound.length; i++) {
-      sound[i].volume(chordVolume * (1- fade));
-    }
-
-
-    allVolumesHTML=""
-    for (i = 0; i < sound.length; i++) {
-      allVolumesHTML+=sound[i]._volume+"<br>";
-    }
-    HTMLconsole.innerHTML = modulus + "°";
-    let finalDirection = compassDirectionToSpecificName(modulus);
-    let letter=[];
-    letter[0] = document.getElementById("letter0");
-    letter[1] = document.getElementById("letter1");
-    letter[2] = document.getElementById("letter2");
-    for (i = 0; i < 3; i++) {
-      if (i < finalDirection.length) {
-        letter[i].innerHTML = finalDirection[i];
-      } else {
-        letter[i].innerHTML = "&nbsp;";
-      }
-    }
-
-    
+  } 
     //HTMLconsole.innerHTML = sliderValue + "<br>modulus: " + modulus + "<br>modulation: " + modulation + "<br>fade: " + fade + '<br>1-fade: ' + (1-fade) + '<br>hertz: ' + hertz + " hz <br>---<br>";//+ allVolumesHTML;
- });
+
+
+}
+
+if (debug==true) {
+
+  const slider = document.getElementById("slider");
+  sliderValue=0;
+  // Add an event listener to monitor changes in the slider's value
+  slider.addEventListener("input", function() {
+    sliderValue = this.value;
+    modulus = sliderValue % 360;
+    directionChanged(modulus);     
+
+  });
+}
+
+
+function handleOrientation(event) {
+  // Check if alpha (compass direction) is available
+      
+  
+    bearing = 360 - event.alpha;
+    bearing = bearing + portladDeclination;
+    if (bearing > 360) {
+      bearing = bearing - 360;
+    }
+    if (bearing < 0) {
+      bearing = bearing + 360;
+    }
+    
+    directionChanged(bearing);
+    
+  }
+    
+
+if ('DeviceOrientationEvent' in window) {
+  window.addEventListener('deviceorientationabsolute', handleOrientation);
+} else {
+  alert('DeviceOrientationEvent is not supported on this browser.');
+}
