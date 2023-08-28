@@ -24,9 +24,15 @@ if (files[chordFile].centAdjustment) {
 }
 
 
-function muteUnmuteAllSounds(){
+function toggleMute(){
   for (i = 0; i < sound.length; i++) {
     sound[i].mute(!sound[i]._muted);
+  }
+  let clickHereID = document.getElementById("taphere");
+  if (clickHereID.innerHTML == "tap here to start") {
+    clickHereID.innerHTML = "tap here to mute";
+  } else {
+    clickHereID.innerHTML = "tap here to start";
   }
 }
 
@@ -68,10 +74,30 @@ function button1() {
         rate: chordRates[i] * chordPitchShiftFactor,
         volume: chordVolume,
       });
-    }   
-    started = true;   
+    } 
+    started = true; 
   }
 
+
+ }
+ function button2() {
+
+  if (started == false) {
+    console.log("playing");
+
+    for (i = 0; i < chordRates.length; i++) {
+      sound[i] = new Howl({
+        src: [chordFile],
+        autoplay: true,
+        loop: true,
+        rate: chordRates[i] * chordPitchShiftFactor,
+        volume: chordVolume,
+      });
+    } 
+    started = true; 
+  } else{
+    toggleMute()
+  }
 
 
  }
