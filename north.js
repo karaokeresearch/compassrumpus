@@ -1,4 +1,5 @@
-let chordVolume=0.01
+let chordVolume=0.02;
+let stingerVolume = 3;
 
 let chordFile="organA.wav";
 let stingerFile="north01.wav"
@@ -85,7 +86,7 @@ for (i = 0; i < baseChordRates.length; i++) {
     src: ["north01.wav"],
     autoplay: false,
     loop: false,
-    volume: 1,
+    volume: stingerVolume
   });
 }
 stinger["south"]=[];
@@ -94,7 +95,7 @@ for (i = 0; i < baseChordRates.length; i++) {
     src: ["south01.wav"],
     autoplay: false,
     loop: false,
-    volume: 1,
+    volume: stingerVolume
   });
 }
 stinger["east"]=[];
@@ -103,7 +104,7 @@ for (i = 0; i < baseChordRates.length; i++) {
     src: ["east01.wav"],
     autoplay: false,
     loop: false,
-    volume: 1,
+    volume: stingerVolume
   });
 }
 stinger["west"]=[];
@@ -112,7 +113,7 @@ for (i = 0; i < baseChordRates.length; i++) {
     src: ["west01.wav"],
     autoplay: false,
     loop: false,
-    volume: 1,
+    volume: stingerVolume
   });
 }
 
@@ -122,39 +123,40 @@ for (i = 0; i < baseChordRates.length; i++) {
 function playStinger(chordPos){
   let direction = compassDirectionToSpecificName(sliderValue);
   //if chordPos is a number higher than the length of baseChordRates, do nothing
-  if (chordPos > baseChordRates.length-1) {
-    return;
-  }
-  directionToSing=direction[chordPos];
-  //if N, change to north, etc.
-  if (directionToSing == "N") {
-    directionToSing = "north";
-  }
-  if (directionToSing == "E") {
-    directionToSing = "east";
-  }
-  if (directionToSing == "S") {
-    directionToSing = "south";
-  }
-  if (directionToSing == "W") {
-    directionToSing = "west";
-  }
-  mySliderValue = parseInt(sliderValue);
+  if (chordPos >= direction.length) {
+    console.log("HARUMPH!")
+  }else{
+    directionToSing=direction[chordPos];
+    //if N, change to north, etc.
+    if (directionToSing == "N") {
+      directionToSing = "north";
+    }
+    if (directionToSing == "E") {
+      directionToSing = "east";
+    }
+    if (directionToSing == "S") {
+      directionToSing = "south";
+    }
+    if (directionToSing == "W") {
+      directionToSing = "west";
+    }
+    mySliderValue = parseInt(sliderValue);
 
-  if (mySliderValue > 180) {
-    mySliderValue = sliderValue - 360;
+    if (mySliderValue > 180) {
+      mySliderValue = sliderValue - 360;
+    }
+    mySliderValue = mySliderValue - files[directionToSing + "01.wav"]["position"]; 
+    let modulus = mySliderValue % 360;
+    console.log("modulus: " , modulus)
+    let modulation = 2 ** (modulus / 360 )
+    //play a single note
+    i = chordPos;
+    var finalRate=baseChordRates[i] * modulation * chordPitchShiftFactor;
+    console.log(baseChordRates[i], modulation, chordPitchShiftFactor)
+    console.log(finalRate)
+    stinger[directionToSing][chordPos].rate(finalRate);
+    stinger[directionToSing][chordPos].play();
   }
-  mySliderValue = mySliderValue - files[directionToSing + "01.wav"]["position"]; 
-  let modulus = mySliderValue % 360;
-  console.log("modulus: " , modulus)
-  let modulation = 2 ** (modulus / 360 )
-  //play a single note
-  i = chordPos;
-  var finalRate=baseChordRates[i] * modulation * chordPitchShiftFactor;
-  console.log(baseChordRates[i], modulation, chordPitchShiftFactor)
-  console.log(finalRate)
-  stinger[directionToSing][chordPos].rate(finalRate);
-  stinger[directionToSing][chordPos].play();
 }
 
 
@@ -213,6 +215,20 @@ sliderValue=0;
     for (i = 0; i < sound.length; i++) {
       allVolumesHTML+=sound[i]._volume+"<br>";
     }
+    HTMLconsole.innerHTML = modulus + "°";
+    let finalDirection = compassDirectionToSpecificName(modulus);
+    let letter=[];
+    letter[0] = document.getElementById("letter0");
+    letter[1] = document.getElementById("letter1");
+    letter[2] = document.getElementById("letter2");
+    for (i = 0; i < 3; i++) {
+      if (i < finalDirection.length) {
+        letter[i].innerHTML = finalDirection[i];
+      } else {
+        letter[i].innerHTML = "&nbsp;";
+      }
+    }
 
-    HTMLconsole.innerHTML = sliderValue + "<br>modulus: " + modulus + "<br>modulation: " + modulation + "<br>fade: " + fade + '<br>1-fade: ' + (1-fade) + '<br>hertz: ' + hertz + " hz <br>---<br>";//+ allVolumesHTML;
+    
+    //HTMLconsole.innerHTML = sliderValue + "<br>modulus: " + modulus + "<br>modulation: " + modulation + "<br>fade: " + fade + '<br>1-fade: ' + (1-fade) + '<br>hertz: ' + hertz + " hz <br>---<br>";//+ allVolumesHTML;
  });
