@@ -64,11 +64,11 @@ baseChordRates=[noteOffsets[0], noteOffsets[4], noteOffsets[7]];
 
 chordRates=[];
 for (i = 0; i < baseChordRates.length; i++) {
-  chordRates.push(baseChordRates[i]/8);
+ // chordRates.push(baseChordRates[i]/8);
   chordRates.push(baseChordRates[i]/4);
   chordRates.push(baseChordRates[i]/2);
   chordRates.push(baseChordRates[i]);
- // chordRates.push(baseChordRates[i]*2);
+  chordRates.push(baseChordRates[i]*2);
  // chordRates.push(baseChordRates[i]*4);
   //chordRates.push(baseChordRates[i]*2);
    
@@ -194,14 +194,17 @@ function playStinger(chordPos){
     //if (mySliderValue > 180) {
     //  mySliderValue = mySliderValue - 360;
    // }
+   
+   //south and west are the lower octave, north and east are the higher octave
     var position = files[directionToSing + "01.wav"]["position"];
     mySliderValue = mySliderValue - files[directionToSing + "01.wav"]["position"]; 
     let modulation = 2 ** (mySliderValue / 360 )
+    
     //play a single note
     i = chordPos;
     var finalRate=baseChordRates[i] * modulation * chordPitchShiftFactor;
-//    console.log("global Bearing: " , globalBearing, "mySliderValue: " , mySliderValue, "directionToSing: " , directionToSing);
-  //  console.log(baseChordRates[i], modulation, chordPitchShiftFactor, "finalRate: " , finalRate, " position: " , position);
+    console.log("global Bearing: " , globalBearing, "mySliderValue: " , mySliderValue, "directionToSing: " , directionToSing);
+   console.log(baseChordRates[i], modulation, chordPitchShiftFactor, "finalRate: " , finalRate, " position: " , position);
     //console.log(finalRate)
     stinger[directionToSing][chordPos].rate(finalRate);
     stinger[directionToSing][chordPos].play();
@@ -341,7 +344,7 @@ const chordVolumeId = document.getElementById("chordVolume");
 const stingerVolumeId = document.getElementById("stingerVolume");
 
 
-chordVolumeId.addEventListener("input", function() {
+chordVolumeId.addEventListener("input", function() {//this is the chord volume slider
   
   chordVolume = this.value/750;
   console.log(chordVolume, this.value);
@@ -352,7 +355,7 @@ chordVolumeId.addEventListener("input", function() {
 
 });
 
-stingerVolumeId.addEventListener("input", function() {
+stingerVolumeId.addEventListener("input", function() {//this is the stinger volume slider
     
     stingerVolume = this.value/100;
     console.log(stingerVolume);
@@ -368,15 +371,51 @@ stingerVolumeId.addEventListener("input", function() {
 
   var fileSelect = document.getElementById("fileSelect");
 
-        // Add an event listener to listen for changes
-        fileSelect.addEventListener("change", function() {
-            // Get the selected value (file name)
-            var selectedValue = fileSelect.value;
+    // Add an event listener to listen for changes
+    fileSelect.addEventListener("change", function() {
+        // Get the selected value (file name)
+        var selectedValue = fileSelect.value;
 
-            for (i=0; i<sound.length; i++){
-              sound[i].unload()
-              }
-            chordFile=selectedValue;
-            started=false;
-            button2();
-        });
+        for (i=0; i<sound.length; i++){
+          sound[i].unload()
+          }
+        chordFile=selectedValue;
+        started=false;
+        button2();
+    });
+let intervalID;
+function startStingerContinuous(interval){
+        //if intervalID is already a running interval, clear it
+        if (intervalID) {
+          clearInterval(intervalID);
+        }
+
+        //every x  seconds, play all three stingers in a row with a half second delay between each
+        intervalID = setInterval(function(){ 
+          playStinger(0);
+          setTimeout(function(){ playStinger(1); }, 500);
+          setTimeout(function(){ playStinger(2); }, 1000);
+        }, interval);
+      }
+//listen to see if the checkbox id="autoplay" is checked. If it is, start the stinger continuous function using the value of the slider id="autoplayms"
+const autoplay = document.getElementById("autoplay");
+const autoplayms = document.getElementById("autoplayms");
+const autoplaymsConsole = document.getElementById("autoplaymsConsole");
+autoplay.addEventListener("change", function() {
+  if (autoplay.checked == true) {
+    startStingerContinuous(autoplayms.value);
+    autoplaymsConsole.innerHTML = autoplayms.value + "ms";
+  } else {
+    clearInterval(intervalID);
+  }
+});
+
+autoplayms.addEventListener("input", function() {
+  //if autoplay is checked
+  if (autoplay.checked == true) {
+    startStingerContinuous(autoplayms.value);
+    
+  }
+  autoplaymsConsole.innerHTML = autoplayms.value + "ms";
+
+});
