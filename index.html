@@ -54,7 +54,11 @@
             border-radius: 1vw;
 
         }
-    
+
+        input[type="checkbox"] {
+            transform: scale(3); /* Adjust the scale factor as needed */
+        }
+                
     </style>
 </head>
 <body>
@@ -98,10 +102,10 @@
         <option value="chord_vox_high.wav">Chord Vox High</option>
         <option value="chord_8_bit.wav">Chord 8 Bit</option>
     </select>
-<br><br>
+<br><br><br><br>
 <div>
-    Auto-play: 
-    <input type="checkbox" id="autoplay" name="autoplay" value="autoplay">
+    Auto-play: &nbsp;&nbsp;
+    <input type="checkbox" id="autoplay" name="autoplay" value="autoplay">  &nbsp;&nbsp;
     <input class="slider" type ="range" min="20" max="5000" value="5000" id="autoplayms">
     <span id="autoplaymsConsole">5000ms</span>
 </div>
