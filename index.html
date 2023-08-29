@@ -9,11 +9,13 @@
             padding: 0;
 
         }
+        
         #terriblecompass {
             z-index:-1;
             width: 50%;
             height: 50%;
-            pointer-events: none;
+            cursor: pointer;
+    
    
         }
         .arrow-down {
@@ -32,9 +34,11 @@
             user-select: none; /* Standard syntax */
         }
 
-        #slider{
+        
+        .slider{
             background-color: orange;
-            width: 100%;
+            width: 80%;
+
         }
  
         .custom-box {
@@ -54,7 +58,7 @@
     </style>
 </head>
 <body>
-    <div id="frequencyDisplay"><span id="taphere">tap here to start</span>
+    <div id="frequencyDisplay"><span id="taphere">tap compass to start</span>
         <br><br>
         <!--a slider that goes from 0 to 1000-->
         <span id="sliderContainer">
@@ -63,11 +67,11 @@
         <span id="console">360</span>
         <br>
         <div class="arrow-down">↓</div>
-        <div>
+        <div class="">
             <img id="terriblecompass" src="bettercompass.png">
             
         </div>
-   
+
         Shepardtone 6000 online
     </div>
 
@@ -75,6 +79,29 @@
 <span class = "custom-box" id="letter0">L</span></div>
 <span class = "custom-box" id="letter1">O</span></div>
 <span class = "custom-box" id="letter2">L</span></div>
+<br><br>
+    <div> Chorus volume
+        <input type="range" min="0" max="100" value="15" class="slider" id="chordVolume">
+    </div>
+    <br><br>
+<div>Stinger volume
+    <input type="range" min="0" max="100" value="100" class="slider" id="stingerVolume">
+</div>
+<br><br>
+<div>
+
+    <select name="fileSelect" id="fileSelect" data-bs-toggle="dropdown">
+        <option value="chord_organ.wav">Chord Organ</option>
+        <option value="chord_strings_low.wav">Chord Strings Low</option>
+        <option value="chord_strings_high.wav">Chord Strings High</option>
+        <option value="chord_vox_low.wav">Chord Vox Low</option>
+        <option value="chord_vox_high.wav">Chord Vox High</option>
+        <option value="chord_8_bit.wav">Chord 8 Bit</option>
+    </select>
+<br><br>
+
+</div>
+
     <script src="howler.min.js"></script>
     <script src="teoria.js"></script>
     <script src="north.js"></script>

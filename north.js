@@ -1,8 +1,7 @@
 let chordVolume=0.02;
-let stingerVolume = 3;
+let stingerVolume = 1;
 
-let chordFile="organA.wav";
-let stingerFile="north01.wav"
+let chordFile="chord_organ.wav";
 
 portladDeclination = 15.8333333
 
@@ -12,28 +11,31 @@ portladDeclination = 15.8333333
 let debug=false
 //if querystring contains debug=true then set the innerHTML of sliderContainer to this: '<input type="range" min="0" max="1000" value="360" class="slider" onmousedown="button1()" id="slider">'
 if (window.location.search.includes("debug=true")) {
-  document.getElementById("sliderContainer").innerHTML = '<input type="range" min="0" max="1000" value="360" class="slider" onmousedown="button1()" id="slider">';
+  document.getElementById("sliderContainer").innerHTML = '<input type="range" min="0" max="1000" value="360" class="slider" id="slider">';
   debug=true
 }
 
 
 //format is file, degree at which it's meant to be played, cent adjustment
 let files={
-      "6.wav": {position:0, centAdjustment:40},
-      "organA.wav":{position:0, centAdjustment: 0 },
+      "chord_organ.wav": {position:0, centAdjustment:0},
+      "chord_strings_low.wav": {position:0, centAdjustment:0},
+      "chord_strings_high.wav": {position:0, centAdjustment:0},
+      "chord_vox_low.wav": {position:0, centAdjustment:40},
+      "chord_vox_high.wav": {position:0, centAdjustment:0},
+      "chord_8_bit.wav": {position:0, centAdjustment:0},
       "north01.wav": {position: 0, centAdjustment: 0},
       "east01.wav": {position:90, centAdjustment: 0},
       "south01.wav": {position:180, centAdjustment: 0},
       "west01.wav": {position:270, centAdjustment: 0},
       };
 
+
+
 let chordPitchShiftFactor = 1;
 var modulus=0;
 
-// if files[chordFile] has a centAdjustment, then we need to adjust the rate
-if (files[chordFile].centAdjustment) {
-  chordPitchShiftFactor = 2 ** (files[chordFile].centAdjustment / 1200); // 1200 cents in an octave
-}
+
 
 
 function toggleMute(){
@@ -41,10 +43,10 @@ function toggleMute(){
     sound[i].mute(!sound[i]._muted);
   }
   let clickHereID = document.getElementById("taphere");
-  if (clickHereID.innerHTML == "tap here to start") {
-    clickHereID.innerHTML = "tap here to mute";
+  if (clickHereID.innerHTML == "tap compass to start") {
+    clickHereID.innerHTML = "tap compass to mute";
   } else {
-    clickHereID.innerHTML = "tap here to start";
+    clickHereID.innerHTML = "tap compass to start";
   }
 }
 
@@ -66,8 +68,8 @@ for (i = 0; i < baseChordRates.length; i++) {
   chordRates.push(baseChordRates[i]/4);
   chordRates.push(baseChordRates[i]/2);
   chordRates.push(baseChordRates[i]);
-  chordRates.push(baseChordRates[i]*2);
-  chordRates.push(baseChordRates[i]*4);
+ // chordRates.push(baseChordRates[i]*2);
+ // chordRates.push(baseChordRates[i]*4);
   //chordRates.push(baseChordRates[i]*2);
    
 }
@@ -93,9 +95,16 @@ function button1() {
 
  }
  function button2() {
-
+  // if files[chordFile] has a centAdjustment, then we need to adjust the rate
+  if (files[chordFile].centAdjustment) {
+    chordPitchShiftFactor = 2 ** (files[chordFile].centAdjustment / 1200); // 1200 cents in an octave
+  }
+console.log("button2")
   if (started == false) {
     console.log("playing");
+    let clickHereID = document.getElementById("taphere");
+    clickHereID.innerHTML = "tap compass to mute";
+    
 
     for (i = 0; i < chordRates.length; i++) {
       sound[i] = new Howl({
@@ -106,9 +115,10 @@ function button1() {
         volume: chordVolume,
       });
     } 
-    started = true; 
+    started = true;
+    directionChanged()
   } else{
-    //toggleMute()
+    toggleMute()
   }
 
 
@@ -248,7 +258,7 @@ function directionChanged(){
   for (i = 0; i < sound.length; i++) {
     allVolumesHTML+=sound[i]._volume+"<br>";
   }
-  HTMLconsole.innerHTML = modulus + "°";
+  HTMLconsole.innerHTML = parseInt(modulus) + "°";
   let finalDirection = compassDirectionToSpecificName(modulus);
   let letter=[];
   letter[0] = document.getElementById("letter0");
@@ -314,15 +324,59 @@ const letter1 = document.getElementById("letter1");
 const letter2 = document.getElementById("letter2");
 
 if ('ontouchstart' in window) {
-  myButton.addEventListener("touchstart", button2);
+  terriblecompass.addEventListener("touchstart", button2);
   letter0.addEventListener("touchstart", function() {playStinger(0);});
   letter1.addEventListener("touchstart", function() {playStinger(1);});
   letter2.addEventListener("touchstart", function() {playStinger(2);});
 } else {
   console.log("You're on a PC.")
-  myButton.addEventListener("mousedown", button2);
+  terriblecompass.addEventListener("mousedown", button2);
   letter0.addEventListener("mousedown", function() {playStinger(0);});
   letter1.addEventListener("mousedown", function() {playStinger(1);});
   letter2.addEventListener("mousedown", function() {playStinger(2);});
-
 }
+
+//set up listeners for the two range-type inputs with chorusVolume and stingerVolume as their ids. Any change we will use to change volume of the chorus and stingers
+const chordVolumeId = document.getElementById("chordVolume");
+const stingerVolumeId = document.getElementById("stingerVolume");
+
+
+chordVolumeId.addEventListener("input", function() {
+  
+  chordVolume = this.value/750;
+  console.log(chordVolume, this.value);
+  for (i = 0; i < sound.length; i++) {
+    sound[i].volume(chordVolume);
+  }
+  directionChanged();//we do this to fix the illusion stuff
+
+});
+
+stingerVolumeId.addEventListener("input", function() {
+    
+    stingerVolume = this.value/100;
+    console.log(stingerVolume);
+    for (i = 0; i < baseChordRates.length; i++) {
+      stinger["north"][i].volume(stingerVolume);
+      stinger["south"][i].volume(stingerVolume);
+      stinger["east"][i].volume(stingerVolume);
+      stinger["west"][i].volume(stingerVolume);
+    }
+
+  
+  });
+
+  var fileSelect = document.getElementById("fileSelect");
+
+        // Add an event listener to listen for changes
+        fileSelect.addEventListener("change", function() {
+            // Get the selected value (file name)
+            var selectedValue = fileSelect.value;
+
+            for (i=0; i<sound.length; i++){
+              sound[i].unload()
+              }
+            chordFile=selectedValue;
+            started=false;
+            button2();
+        });
