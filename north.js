@@ -28,6 +28,7 @@ let files={
       };
 
 let chordPitchShiftFactor = 1;
+var modulus=0;
 
 // if files[chordFile] has a centAdjustment, then we need to adjust the rate
 if (files[chordFile].centAdjustment) {
@@ -107,7 +108,7 @@ function button1() {
     } 
     started = true; 
   } else{
-    toggleMute()
+    //toggleMute()
   }
 
 
@@ -158,9 +159,10 @@ for (i = 0; i < baseChordRates.length; i++) {
 
 
 function playStinger(chordPos){
-  let direction = compassDirectionToSpecificName(sliderValue);
+  console.log("chordPos: " , chordPos)
+  let direction = compassDirectionToSpecificName(globalBearing);
   //if chordPos is a number higher than the length of baseChordRates, do nothing
-  if (chordPos >= direction.length) {
+  if (chordPos >= direction.length) { //you clicked a blank square
     console.log("HARUMPH!")
   }else{
     directionToSing=direction[chordPos];
@@ -177,20 +179,20 @@ function playStinger(chordPos){
     if (directionToSing == "W") {
       directionToSing = "west";
     }
-    mySliderValue = parseInt(sliderValue);
+    mySliderValue = parseInt(globalBearing);
 
-    if (mySliderValue > 180) {
-      mySliderValue = sliderValue - 360;
-    }
+    //if (mySliderValue > 180) {
+    //  mySliderValue = mySliderValue - 360;
+   // }
+    var position = files[directionToSing + "01.wav"]["position"];
     mySliderValue = mySliderValue - files[directionToSing + "01.wav"]["position"]; 
-    let modulus = mySliderValue % 360;
-    console.log("modulus: " , modulus)
-    let modulation = 2 ** (modulus / 360 )
+    let modulation = 2 ** (mySliderValue / 360 )
     //play a single note
     i = chordPos;
     var finalRate=baseChordRates[i] * modulation * chordPitchShiftFactor;
-    console.log(baseChordRates[i], modulation, chordPitchShiftFactor)
-    console.log(finalRate)
+//    console.log("global Bearing: " , globalBearing, "mySliderValue: " , mySliderValue, "directionToSing: " , directionToSing);
+  //  console.log(baseChordRates[i], modulation, chordPitchShiftFactor, "finalRate: " , finalRate, " position: " , position);
+    //console.log(finalRate)
     stinger[directionToSing][chordPos].rate(finalRate);
     stinger[directionToSing][chordPos].play();
   }
@@ -214,10 +216,9 @@ function compassDirectionToSpecificName(direction) {
 }
   
 
-function directionChanged(modulus){
+function directionChanged(){
+  modulus=globalBearing;
   const HTMLconsole = document.getElementById("console");
-  
-  
   //modulation = modulus / 360 + 1; // old, non-equal-tempered version
   //instead let's do an equal-tempered version
   let modulation = 2 ** (modulus / 360 )
@@ -226,7 +227,7 @@ function directionChanged(modulus){
   }
   terriblecompass.style.transform = `rotate(${360-modulus}deg)`
 
-  hertz = 440 * modulation;
+  //hertz = 440 * modulation;
 
   //ILLUSION CREATED HERE
   //for the highest element in sound[]: the volume should decrease to 0 as the slider value approaches 360
@@ -265,24 +266,10 @@ function directionChanged(modulus){
 
 }
 
-if (debug==true) {
-
-  const slider = document.getElementById("slider");
-  sliderValue=0;
-  // Add an event listener to monitor changes in the slider's value
-  slider.addEventListener("input", function() {
-    sliderValue = this.value;
-    modulus = sliderValue % 360;
-    directionChanged(modulus);     
-
-  });
-}
-
 
 function handleOrientation(event) {
   // Check if alpha (compass direction) is available
       
-  
     bearing = 360 - event.alpha;
     bearing = bearing + portladDeclination;
     if (bearing > 360) {
@@ -291,14 +278,51 @@ function handleOrientation(event) {
     if (bearing < 0) {
       bearing = bearing + 360;
     }
-    
-    directionChanged(bearing);
+    globalBearing=bearing;
+    directionChanged();
     
   }
-    
 
-if ('DeviceOrientationEvent' in window) {
-  window.addEventListener('deviceorientationabsolute', handleOrientation);
+let globalBearing=0;
+  
+  if (debug==true) {
+
+    const slider = document.getElementById("slider");
+    // Add an event listener to monitor changes in the slider's value
+    slider.addEventListener("input", function() {
+      var modulus = this.value % 360;
+      globalBearing=modulus;//I hate that we have to do this but I see no other option
+      directionChanged();     
+    });
+  }else{  
+    
+  if ('DeviceOrientationEvent' in window) {
+    window.addEventListener('deviceorientationabsolute', handleOrientation); //use this tidier helper function 
+  } else {
+    alert('DeviceOrientationEvent is not supported on this browser.');
+  }
+
+
+
+
+}
+
+
+const myButton = document.getElementById("frequencyDisplay");
+const letter0 = document.getElementById("letter0");
+const letter1 = document.getElementById("letter1");
+const letter2 = document.getElementById("letter2");
+
+if ('ontouchstart' in window) {
+  myButton.addEventListener("touchstart", button2);
+  letter0.addEventListener("touchstart", function() {playStinger(0);});
+  letter1.addEventListener("touchstart", function() {playStinger(1);});
+  letter2.addEventListener("touchstart", function() {playStinger(2);});
 } else {
-  alert('DeviceOrientationEvent is not supported on this browser.');
+  console.log("You're on a PC.")
+  myButton.addEventListener("mousedown", button2);
+  letter0.addEventListener("mousedown", function() {playStinger(0);});
+  letter1.addEventListener("mousedown", function() {playStinger(1);});
+  letter2.addEventListener("mousedown", function() {playStinger(2);});
+
 }
