@@ -125,44 +125,30 @@ function button2() {
 
 
 
+
  
 let stinger={};
-stinger["north"]=[];
-for (i = 0; i < baseChordRates.length; i++) {
-  stinger["north"][i] = new Howl({
-    src: ["north01.wav"],
-    autoplay: false,
-    loop: false,
-    volume: stingerVolume
-  });
-}
-stinger["south"]=[];
-for (i = 0; i < baseChordRates.length; i++) {
-  stinger["south"][i] = new Howl({
-    src: ["south01.wav"],
-    autoplay: false,
-    loop: false,
-    volume: stingerVolume
-  });
-}
-stinger["east"]=[];
-for (i = 0; i < baseChordRates.length; i++) {
-  stinger["east"][i] = new Howl({
-    src: ["east01.wav"],
-    autoplay: false,
-    loop: false,
-    volume: stingerVolume
-  });
-}
-stinger["west"]=[];
-for (i = 0; i < baseChordRates.length; i++) {
-  stinger["west"][i] = new Howl({
-    src: ["west01.wav"],
-    autoplay: false,
-    loop: false,
-    volume: stingerVolume
-  });
-}
+stinger["north"]={};
+stinger["south"]={};
+stinger["east"]={};
+stinger["west"]={};
+
+
+WebAudiox.loadBuffer(context, "north01.wav", function(buffer){
+  stinger["north"]["bufferData"] = buffer;
+});
+
+WebAudiox.loadBuffer(context, "south01.wav", function(buffer){
+  stinger["south"]["bufferData"] = buffer;
+});
+
+WebAudiox.loadBuffer(context, "east01.wav", function(buffer){
+  stinger["east"]["bufferData"] = buffer;
+});
+
+WebAudiox.loadBuffer(context, "west01.wav", function(buffer){
+  stinger["west"]["bufferData"] = buffer;
+});
 
 
 
@@ -189,10 +175,6 @@ function playStinger(chordPos){
       directionToSing = "west";
     }
     mySliderValue = parseInt(globalBearing);
-
-    //if (mySliderValue > 180) {
-    //  mySliderValue = mySliderValue - 360;
-   // }
    
    //south and west are the lower octave, north and east are the higher octave
     var position = files[directionToSing + "01.wav"]["position"];
@@ -205,8 +187,25 @@ function playStinger(chordPos){
     console.log("global Bearing: " , globalBearing, "mySliderValue: " , mySliderValue, "directionToSing: " , directionToSing);
    console.log(baseChordRates[i], modulation, chordPitchShiftFactor, "finalRate: " , finalRate, " position: " , position);
     //console.log(finalRate)
-    stinger[directionToSing][chordPos].rate(finalRate);
-    stinger[directionToSing][chordPos].play();
+
+
+    let source = context.createBufferSource();
+    let gainNode = context.createGain();
+    source.connect(gainNode);
+    gainNode.connect(lineOut.destination);
+
+    source.buffer = stinger[directionToSing]["bufferData"];
+    source.playbackRate.value = finalRate;
+    
+    gainNode.gain.value = stingerVolume;
+    
+    source.onended = function () {
+      source.disconnect();
+      source.onended = null; // Remove the event listener to prevent memory leaks
+    };
+    source.start(0);
+
+
   }
 }
 
@@ -235,7 +234,9 @@ function directionChanged(){
   //instead let's do an equal-tempered version
   let modulation = 2 ** (modulus / 360 )
   for (i = 0; i < chordRates.length; i++) { 
-    sound[i]["bufferSource"].playbackRate.value= chordRates[i] * modulation * chordPitchShiftFactor; 
+    let myValue = chordRates[i] * modulation * chordPitchShiftFactor;
+    console.log(myValue);
+    sound[i]["bufferSource"].playbackRate.value= myValue; 
   }
   terriblecompass.style.transform = `rotate(${360-modulus}deg)`
 
