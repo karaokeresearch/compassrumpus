@@ -102,7 +102,7 @@ function button2() {
         sound[i]["bufferSource"] = context.createBufferSource();
         sound[i]["gain"] = context.createGain();
         sound[i]["bufferSource"].connect(sound[i]["gain"]);
-        sound[i]["gain"].connect(lineOut.destination);
+        sound[i]["gain"].connect(context.destination);
         sound[i]["bufferSource"].loop = true;
         sound[i]["gain"].gain.value = chordVolume;
         sound[i]["bufferSource"].playbackRate.value = chordRates[i] * chordPitchShiftFactor;
@@ -192,7 +192,7 @@ function playStinger(chordPos){
     let source = context.createBufferSource();
     let gainNode = context.createGain();
     source.connect(gainNode);
-    gainNode.connect(lineOut.destination);
+    gainNode.connect(context.destination);
 
     source.buffer = stinger[directionToSing]["bufferData"];
     source.playbackRate.value = finalRate;
@@ -346,7 +346,7 @@ chordVolumeId.addEventListener("input", function() {//this is the chord volume s
   chordVolume = this.value/750;
   console.log(chordVolume, this.value);
   for (i = 0; i < sound.length; i++) {
-    sound[i].volume(chordVolume);
+    sound[i]["gain"].gain.value=chordVolume;
   }
   directionChanged();//we do this to fix the illusion stuff
 
@@ -355,14 +355,7 @@ chordVolumeId.addEventListener("input", function() {//this is the chord volume s
 stingerVolumeId.addEventListener("input", function() {//this is the stinger volume slider
     
     stingerVolume = this.value/100;
-    console.log(stingerVolume);
-    for (i = 0; i < baseChordRates.length; i++) {
-      stinger["north"][i].volume(stingerVolume);
-      stinger["south"][i].volume(stingerVolume);
-      stinger["east"][i].volume(stingerVolume);
-      stinger["west"][i].volume(stingerVolume);
-    }
-
+   
   
   });
 
