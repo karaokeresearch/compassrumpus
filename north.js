@@ -3,11 +3,22 @@ let stingerVolume = 1;
 
 let chordFile="chord_organ.wav";
 
-portladDeclination = 15.8333333
+portlandDeclination = 15.8333333
 
 // create WebAudio API context
 let context = new AudioContext();
 let tuna = new Tuna(context);
+
+
+
+var overdrive = new tuna.Overdrive({
+  outputGain: -1,         //0 to 1+
+  drive: 1,              //0 to 1
+  curveAmount: 0.1,          //0 to 1
+  algorithmIndex: 2,       //0 to 5, selects one of our drive algorithms
+  bypass: 0
+});
+overdrive.connect(context.destination);
 
 // Create lineOut
 let lineOut = new WebAudiox.LineOut(context)
@@ -192,7 +203,7 @@ function playStinger(chordPos){
     let source = context.createBufferSource();
     let gainNode = context.createGain();
     source.connect(gainNode);
-    gainNode.connect(context.destination);
+    gainNode.connect(overdrive);
 
     source.buffer = stinger[directionToSing]["bufferData"];
     source.playbackRate.value = finalRate;
@@ -281,7 +292,7 @@ function handleOrientation(event) {
   // Check if alpha (compass direction) is available
       
     bearing = 360 - event.alpha;
-    bearing = bearing + portladDeclination;
+    bearing = bearing + portlandDeclination;
     if (bearing > 360) {
       bearing = bearing - 360;
     }
