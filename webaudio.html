@@ -1,0 +1,93 @@
+<script src='webaudiox.js'></script>
+<script src='tuna.js'></script>
+<script>
+    // create WebAudio API context
+    var context = new AudioContext();
+    var tuna = new Tuna(context);
+
+    // Create lineOut
+    var lineOut = new WebAudiox.LineOut(context)
+    var source  = context.createBufferSource();
+    var sourceGain= context.createGain();
+    // load a sound and play it immediatly
+    WebAudiox.loadBuffer(context, 'chord_strings_low.wav', function(buffer){
+        // init AudioBufferSourceNode
+        source.loop=true;
+        source.buffer   = buffer;
+        source.connect(sourceGain);
+        sourceGain.connect(lineOut.destination);
+
+        // start the sound now
+
+    });
+
+
+
+
+
+    var pingPongDelay = new tuna.PingPongDelay({
+        wetLevel: 0.5, //0 to 1
+        feedback: 0.3, //0 to 1
+        delayTimeLeft: 150, //1 to 10000 (milliseconds)
+        delayTimeRight: 200 //1 to 10000 (milliseconds)
+    });
+
+    pingPongDelay.connect(lineOut.destination);
+
+    var cabinet = new tuna.Cabinet({
+        makeupGain: 10,                                 //0 to 20
+        impulsePath: "OpenBack-Phasey2-EQ1.wav",    //path to your speaker impulse
+        bypass: 0
+    });
+    cabinet.connect(lineOut.destination);
+
+    var bitcrusher = new tuna.Bitcrusher({
+        bits: 4,          //1 to 16
+        normfreq: 0.1,    //0 to 1
+        bufferSize: 4096  //256 to 16384
+    });
+
+    bitcrusher.connect(lineOut.destination);
+
+    var moog = new tuna.MoogFilter({
+        cutoff: 0.065,    //0 to 1
+        resonance: 3.5,   //0 to 4
+        bufferSize: 4096  //256 to 16384
+    });
+    
+    moog.connect(lineOut.destination);
+
+
+    var overdrive = new tuna.Overdrive({
+        outputGain: 0.01,         //0 to 1+
+        drive: 0.3,              //0 to 1
+        curveAmount: 1,          //0 to 1
+        algorithmIndex: 1,       //0 to 5, selects one of our drive algorithms
+        bypass: 0
+    });
+    overdrive.connect(lineOut.destination);
+    
+    var northBuffer;
+    WebAudiox.loadBuffer(context, 'north01.wav', function(buffer){
+        northBuffer = buffer;
+    });
+     function playNorth(){
+        var source2  = context.createBufferSource();
+        source2.loop=false;
+        source2.buffer= northBuffer;
+
+        
+        // Create a GainNode for volume control
+        var gainNode = context.createGain();
+        source2.connect(gainNode);
+        gainNode.connect(overdrive); // Connect to your audio processing graph
+        gainNode.gain.value = 1;
+        source2.start(0);
+
+        source2.onended = function () {
+            source2.disconnect();
+            console.log("done.")
+            source2.onended = null; // Remove the event listener to prevent memory leaks
+        };
+    }
+</script>
