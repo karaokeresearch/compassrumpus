@@ -5,7 +5,12 @@ let chordFile="chord_organ.wav";
 
 portladDeclination = 15.8333333
 
+// create WebAudio API context
+let context = new AudioContext();
+let tuna = new Tuna(context);
 
+// Create lineOut
+let lineOut = new WebAudiox.LineOut(context)
 
 
 let debug=false
@@ -50,7 +55,7 @@ function toggleMute(){
   }
 }
 
-sound=[];
+
 started=false;
 noteOffsets=[];
 const terriblecompass = document.getElementById("terriblecompass");
@@ -76,31 +81,38 @@ for (i = 0; i < baseChordRates.length; i++) {
 //sort this array by size
 chordRates.sort(function(a, b){return a - b});
 
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const bus = audioContext.createGain();
-bus.connect(audioContext.destination);
-    
+//const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+//const bus = audioContext.createGain();
+//bus.connect(audioContext.destination);
+sound=[];    
 function button2() {
   // if files[chordFile] has a centAdjustment, then we need to adjust the rate
   if (files[chordFile].centAdjustment) {
     chordPitchShiftFactor = 2 ** (files[chordFile].centAdjustment / 1200); // 1200 cents in an octave
-  }
+  } 
   console.log("button2")
   if (started == false) {
     console.log("playing");
     let clickHereID = document.getElementById("taphere");
     clickHereID.innerHTML = "tap compass to mute";
     
+    WebAudiox.loadBuffer(context, chordFile, function(buffer){
+      for (i = 0; i < chordRates.length; i++) {
+        sound[i] ={};
+        sound[i]["bufferSource"] = context.createBufferSource();
+        sound[i]["gain"] = context.createGain();
+        sound[i]["bufferSource"].connect(sound[i]["gain"]);
+        sound[i]["gain"].connect(lineOut.destination);
+        sound[i]["bufferSource"].loop = true;
+        sound[i]["gain"].gain.value = chordVolume;
+        sound[i]["bufferSource"].playbackRate.value = chordRates[i] * chordPitchShiftFactor;
+        // init AudioBufferSourceNode
+        sound[i]["bufferSource"].buffer = buffer;
+        // start the sound now
+        sound[i]["bufferSource"].start(0);
 
-    for (i = 0; i < chordRates.length; i++) {
-      sound[i] = new Howl({
-        src: [chordFile],
-        autoplay: true,
-        loop: true,
-        rate: chordRates[i] * chordPitchShiftFactor,
-        volume: chordVolume,
-      });
-    }
+      }
+    });
      
     started = true;
     directionChanged()
@@ -223,7 +235,7 @@ function directionChanged(){
   //instead let's do an equal-tempered version
   let modulation = 2 ** (modulus / 360 )
   for (i = 0; i < chordRates.length; i++) { 
-    sound[i].rate(chordRates[i] * modulation * chordPitchShiftFactor); 
+    sound[i]["bufferSource"].playbackRate.value= chordRates[i] * modulation * chordPitchShiftFactor; 
   }
   terriblecompass.style.transform = `rotate(${360-modulus}deg)`
 
@@ -235,19 +247,16 @@ function directionChanged(){
   fade =modulus/360;
 
   for (i = 0; i < baseChordRates.length; i++) {
-    sound[i].volume(chordVolume * fade);
+    sound[i]["gain"].gain.value=(chordVolume * fade);
   }
 
   //now let's do the same with the top three sounds in the array
   for (i = sound.length-baseChordRates.length; i < sound.length; i++) {
-    sound[i].volume(chordVolume * (1- fade));
+    sound[i]["gain"].gain.value=(chordVolume * (1- fade));
   }
 
 
-  allVolumesHTML=""
-  for (i = 0; i < sound.length; i++) {
-    allVolumesHTML+=sound[i]._volume+"<br>";
-  }
+
   HTMLconsole.innerHTML = parseInt(modulus) + "°";
   let finalDirection = compassDirectionToSpecificName(modulus);
   let letter=[];

@@ -9,7 +9,7 @@
     var lineOut = new WebAudiox.LineOut(context)
     var source  = context.createBufferSource();
     var sourceGain= context.createGain();
-    // load a sound and play it immediatly
+    // load a sound and play it immediately
     WebAudiox.loadBuffer(context, 'chord_strings_low.wav', function(buffer){
         // init AudioBufferSourceNode
         source.loop=true;
