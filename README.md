@@ -1,18 +1,19 @@
-Todo:
+Howdy North Todo:
 - ~~get the compass giving the actual coordinates~~
-- switch to wavs
-     - cannabalize Singalong.js looping assets
-- implement audio illusion by trimming the fringes 
+- ~~switch to wavs~~
+     - ~~cannabalize Singalong.js looping assets~~
+- ~~implement audio illusion by trimming the fringes~~
+- ability to record a session and save to a file that can be played back later
+- GPS-based declination detection
 - UI
-    - start threshold (slider)
-    - stop threshold (slider)
-    - sample size (slider)
-    - tuner (slider)
-    - instrument (dropdown)
-    - sharp/flat (dropdown)
-    - chord quality (or type) (textbox or dropdown)
-    - voice number (slider)
-    - a visible real-time compass but instead of ordinals, it's piano keys
-        - rainbow piano keys???
-    - a volume indicator
-- you may want a different threshhold from stop than from when you're going and the brakes are applied
+    - ~~instrument dropdown~~
+        - fix it for the new signal path stuff
+    - chord triad selector (slider)
+    - compass fine-tuner
+    - chord: minor or major? (dropdown)
+    - ~~a visible real-time compass but instead of ordinals, it's piano keys~~
+        - redo it so that it has rainbow piano keys and looks good
+    - effect selector (pedals)
+        - eventually full effect path builder
+    - a volume meter
+

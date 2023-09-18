@@ -8,6 +8,9 @@ portlandDeclination = 15.8333333
 // create WebAudio API context
 let context = new AudioContext();
 let tuna = new Tuna(context);
+// Create lineOut
+let lineOut = new WebAudiox.LineOut(context)
+
 
 
 
@@ -18,10 +21,19 @@ var overdrive = new tuna.Overdrive({
   algorithmIndex: 2,       //0 to 5, selects one of our drive algorithms
   bypass: 0
 });
-overdrive.connect(context.destination);
+overdrive.connect(lineOut.destination);
 
-// Create lineOut
-let lineOut = new WebAudiox.LineOut(context)
+
+var delay = new tuna.Delay({
+  feedback: 0.4,    //0 to 1+
+  delayTime: 300,    //1 to 10000 milliseconds
+  wetLevel: 1,     //0 to 1+
+  dryLevel: 1,       //0 to 1+
+  cutoff: 20000,      //cutoff frequency of the built in lowpass-filter. 20 to 22050
+  bypass: false
+});
+delay.connect(overdrive);
+
 
 
 let debug=false
@@ -203,7 +215,7 @@ function playStinger(chordPos){
     let source = context.createBufferSource();
     let gainNode = context.createGain();
     source.connect(gainNode);
-    gainNode.connect(overdrive);
+    gainNode.connect(delay);
 
     source.buffer = stinger[directionToSing]["bufferData"];
     source.playbackRate.value = finalRate;
