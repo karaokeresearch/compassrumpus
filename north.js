@@ -108,34 +108,49 @@ chordRates.sort(function(a, b){return a - b});
 //const bus = audioContext.createGain();
 //bus.connect(audioContext.destination);
 sound=[];    
-function button2() {
-  // if files[chordFile] has a centAdjustment, then we need to adjust the rate
+g=false;
+function loadChord(chordFile){
   if (files[chordFile].centAdjustment) {
     chordPitchShiftFactor = 2 ** (files[chordFile].centAdjustment / 1200); // 1200 cents in an octave
   } 
+  console.log(chordFile);
+  WebAudiox.loadBuffer(context, chordFile, function(buffer){
+    //stop and disconnect any sounds if present
+    for (i = 0; i < chordRates.length; i++) {
+      if (sound[i] && sound[i]["bufferSource"]) {
+        sound[i]["bufferSource"].stop();
+        sound[i]["bufferSource"].disconnect();
+
+      }
+      
+      sound[i] ={};
+      sound[i]["bufferSource"] = context.createBufferSource();
+      sound[i]["gain"] = context.createGain();
+      sound[i]["bufferSource"].connect(sound[i]["gain"]);
+      sound[i]["gain"].connect(context.destination);
+      sound[i]["bufferSource"].loop = true;
+      sound[i]["gain"].gain.value = chordVolume;
+      sound[i]["bufferSource"].playbackRate.value = chordRates[i] * chordPitchShiftFactor;
+      // init AudioBufferSourceNode
+      sound[i]["bufferSource"].buffer = buffer;
+      // start the sound now
+      sound[i]["bufferSource"].start(0);
+  
+    }
+  });
+}
+
+function button2() {
+  // if files[chordFile] has a centAdjustment, then we need to adjust the rate
+
   console.log("button2")
   if (started == false) {
     console.log("playing");
     let clickHereID = document.getElementById("taphere");
     clickHereID.innerHTML = "tap compass to mute";
     
-    WebAudiox.loadBuffer(context, chordFile, function(buffer){
-      for (i = 0; i < chordRates.length; i++) {
-        sound[i] ={};
-        sound[i]["bufferSource"] = context.createBufferSource();
-        sound[i]["gain"] = context.createGain();
-        sound[i]["bufferSource"].connect(sound[i]["gain"]);
-        sound[i]["gain"].connect(context.destination);
-        sound[i]["bufferSource"].loop = true;
-        sound[i]["gain"].gain.value = chordVolume;
-        sound[i]["bufferSource"].playbackRate.value = chordRates[i] * chordPitchShiftFactor;
-        // init AudioBufferSourceNode
-        sound[i]["bufferSource"].buffer = buffer;
-        // start the sound now
-        sound[i]["bufferSource"].start(0);
+    loadChord(chordFile);
 
-      }
-    });
      
     started = true;
     directionChanged()
@@ -388,13 +403,10 @@ stingerVolumeId.addEventListener("input", function() {//this is the stinger volu
     fileSelect.addEventListener("change", function() {
         // Get the selected value (file name)
         var selectedValue = fileSelect.value;
+        console.log("***" + selectedValue + "***");
+        loadChord(selectedValue);
 
-        for (i=0; i<sound.length; i++){
-          sound[i].unload()
-          }
-        chordFile=selectedValue;
         started=false;
-        button2();
     });
 let intervalID;
 function startStingerContinuous(interval){
