@@ -1,7 +1,7 @@
 let chordVolume=0.02;
 let stingerVolume = 1;
 
-let chordFile="chord_organ.wav";
+var fileSelect = document.getElementById("fileSelect");
 
 portlandDeclination = 15.8333333
 
@@ -89,11 +89,11 @@ for (i = 0; i < 13; i++) {
 }
 baseChordRates=[noteOffsets[0], noteOffsets[4], noteOffsets[7]]; //a major chord
 
-baseChordRates=[noteOffsets[0]]; //a single note
+//baseChordRates=[noteOffsets[0]]; //a single note
 //half and double each of these and add all nine to chordRates
 
 chordRates=[];
-for (i = 0; i < baseChordRates.length; i++) {
+for (i = 0; i < baseChordRates.length; i++) {//each one of these below is an octave. You need at least 2 to do the Shepard tone illusion but 3+ makes it smoother.I find this arrangement is best for solo voices at least
  // chordRates.push(baseChordRates[i]/8);
   chordRates.push(baseChordRates[i]/4);
   chordRates.push(baseChordRates[i]/2);
@@ -119,10 +119,9 @@ function loadChord(chordFile){
   WebAudiox.loadBuffer(context, chordFile, function(buffer){
     //stop and disconnect any sounds if present
     for (i = 0; i < chordRates.length; i++) {
-      if (sound[i] && sound[i]["bufferSource"]) {
+      if (sound[i] && sound[i]["bufferSource"]) {//if there's already an instrument playing, stop and disconnect it before we overwrite.
         sound[i]["bufferSource"].stop();
         sound[i]["bufferSource"].disconnect();
-
       }
       
       sound[i] ={};
@@ -150,9 +149,9 @@ function button2() {
   if (started == false) {
     console.log("playing");
     let clickHereID = document.getElementById("taphere");
-    clickHereID.innerHTML = "tap compass to mute";
+    clickHereID.innerHTML = "you are playing music";
     
-    loadChord(chordFile);
+    loadChord(fileSelect.value);
 
      
     started = true;
@@ -399,14 +398,11 @@ stingerVolumeId.addEventListener("input", function() {//this is the stinger volu
   
   });
 
-  var fileSelect = document.getElementById("fileSelect");
+
 
     // Add an event listener to listen for changes
     fileSelect.addEventListener("change", function() {
-        // Get the selected value (file name)
-        var selectedValue = fileSelect.value;
-        //console.log("***" + selectedValue + "***");
-        loadChord(selectedValue);
+        loadChord(fileSelect.value);
         
         
 
