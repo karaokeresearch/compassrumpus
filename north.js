@@ -87,7 +87,9 @@ const terriblecompass = document.getElementById("terriblecompass");
 for (i = 0; i < 13; i++) {
   noteOffsets.push(((2**(1/12))**i)); //this has to do with equal temprament
 }
-baseChordRates=[noteOffsets[0], noteOffsets[4], noteOffsets[7]];
+baseChordRates=[noteOffsets[0], noteOffsets[4], noteOffsets[7]]; //a major chord
+
+baseChordRates=[noteOffsets[0]]; //a single note
 //half and double each of these and add all nine to chordRates
 
 chordRates=[];
@@ -96,7 +98,7 @@ for (i = 0; i < baseChordRates.length; i++) {
   chordRates.push(baseChordRates[i]/4);
   chordRates.push(baseChordRates[i]/2);
   chordRates.push(baseChordRates[i]);
-  chordRates.push(baseChordRates[i]*2);
+//  chordRates.push(baseChordRates[i]*2);
  // chordRates.push(baseChordRates[i]*4);
   //chordRates.push(baseChordRates[i]*2);
    
@@ -155,7 +157,7 @@ function button2() {
     started = true;
     directionChanged()
   } else{
-    toggleMute()
+    //toggleMute()
   }
 
 
@@ -273,7 +275,7 @@ function directionChanged(){
   let modulation = 2 ** (modulus / 360 )
   for (i = 0; i < chordRates.length; i++) { 
     let myValue = chordRates[i] * modulation * chordPitchShiftFactor;
-    console.log(myValue);
+    //console.log(myValue);
     sound[i]["bufferSource"].playbackRate.value= myValue; 
   }
   terriblecompass.style.transform = `rotate(${360-modulus}deg)`
@@ -403,7 +405,7 @@ stingerVolumeId.addEventListener("input", function() {//this is the stinger volu
     fileSelect.addEventListener("change", function() {
         // Get the selected value (file name)
         var selectedValue = fileSelect.value;
-        console.log("***" + selectedValue + "***");
+        //console.log("***" + selectedValue + "***");
         loadChord(selectedValue);
 
         started=false;

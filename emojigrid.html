@@ -1,0 +1,33 @@
+<div class="emoji-grid">
+    <button>🥟</button> <!-- Happy -->
+    <button>🍮</button> <!-- Thoughtful -->
+    <button>🌮</button> <!-- Sad -->
+    <button>🏀</button> <!-- Cool -->
+    <button>🍟</button> <!-- Party -->
+    <!-- Add more buttons with different emojis as needed -->
+</div>
+
+
+
+<style>
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 10px;
+}
+
+.emoji-grid button {
+    padding: 10px;
+    font-size: 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s;
+}
+
+.emoji-grid button:hover {
+    background-color: #e0e0e0;
+}
+
+</style>
