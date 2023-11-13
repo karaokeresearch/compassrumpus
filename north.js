@@ -139,6 +139,7 @@ function loadChord(chordFile){
       sound[i]["bufferSource"].start(0);
   
     }
+    directionChanged();
   });
 }
 
@@ -155,7 +156,6 @@ function button2() {
 
      
     started = true;
-    directionChanged()
   } else{
     //toggleMute()
   }
@@ -407,6 +407,8 @@ stingerVolumeId.addEventListener("input", function() {//this is the stinger volu
         var selectedValue = fileSelect.value;
         //console.log("***" + selectedValue + "***");
         loadChord(selectedValue);
+        
+        
 
         started=false;
     });
