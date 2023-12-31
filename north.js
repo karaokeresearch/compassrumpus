@@ -5,36 +5,80 @@ var fileSelect = document.getElementById("fileSelect");
 
 portlandDeclination = 15.8333333
 
-// create WebAudio API context
-let context = new AudioContext();
-let tuna = new Tuna(context);
-// Create lineOut
-let lineOut = new WebAudiox.LineOut(context)
+
+let context;
+let tuna;
+let lineOut;
+let stinger={};
+stinger["north"]={};
+stinger["south"]={};
+stinger["east"]={};
+stinger["west"]={};
+var overdrivee;
+var delay;  
+
+
+function initAudio(){
+  if (started == false) {
+    // create WebAudio API context
+    context = new AudioContext();
+    tuna = new Tuna(context);
+    // Create lineOut
+    lineOut = new WebAudiox.LineOut(context)
 
 
 
 
-var overdrive = new tuna.Overdrive({
-  outputGain: -1,         //0 to 1+
-  drive: 1,              //0 to 1
-  curveAmount: 0.1,          //0 to 1
-  algorithmIndex: 2,       //0 to 5, selects one of our drive algorithms
-  bypass: 0
-});
-overdrive.connect(lineOut.destination);
+    overdrive = new tuna.Overdrive({
+      outputGain: -1,         //0 to 1+
+      drive: 1,              //0 to 1
+      curveAmount: 0.1,          //0 to 1
+      algorithmIndex: 2,       //0 to 5, selects one of our drive algorithms
+      bypass: 0
+    });
+    overdrive.connect(lineOut.destination);
 
 
-var delay = new tuna.Delay({
-  feedback: 0.4,    //0 to 1+
-  delayTime: 300,    //1 to 10000 milliseconds
-  wetLevel: 1,     //0 to 1+
-  dryLevel: 1,       //0 to 1+
-  cutoff: 20000,      //cutoff frequency of the built in lowpass-filter. 20 to 22050
-  bypass: false
-});
-delay.connect(overdrive);
+    delay = new tuna.Delay({
+      feedback: 0.4,    //0 to 1+
+      delayTime: 300,    //1 to 10000 milliseconds
+      wetLevel: 1,     //0 to 1+
+      dryLevel: 1,       //0 to 1+
+      cutoff: 20000,      //cutoff frequency of the built in lowpass-filter. 20 to 22050
+      bypass: false
+    });
+    delay.connect(overdrive);
+
+    
 
 
+    WebAudiox.loadBuffer(context, "north01.wav", function(buffer){
+      stinger["north"]["bufferData"] = buffer;
+    });
+
+    WebAudiox.loadBuffer(context, "south01.wav", function(buffer){
+      stinger["south"]["bufferData"] = buffer;
+    });
+
+    WebAudiox.loadBuffer(context, "east01.wav", function(buffer){
+      stinger["east"]["bufferData"] = buffer;
+    });
+
+    WebAudiox.loadBuffer(context, "west01.wav", function(buffer){
+      stinger["west"]["bufferData"] = buffer;
+    });
+
+    console.log("playing");
+      let clickHereID = document.getElementById("taphere");
+      clickHereID.innerHTML = "you are playing music";
+      
+      loadChord(fileSelect.value,[1]);
+
+      
+      started = true;
+  }
+
+}
 
 let debug=false
 //if querystring contains debug=true then set the innerHTML of sliderContainer to this: '<input type="range" min="0" max="1000" value="360" class="slider" onmousedown="button1()" id="slider">'
@@ -80,50 +124,60 @@ function toggleMute(){
 
 
 started=false;
-noteOffsets=[];
+
 const terriblecompass = document.getElementById("terriblecompass");
 
-//first let's define the base chord. Below is a major chord
+let sound=[];   
+let noteOffsets=[]; 
 for (i = 0; i < 13; i++) {
   noteOffsets.push(((2**(1/12))**i)); //this has to do with equal temprament
 }
-baseChordRates=[noteOffsets[0], noteOffsets[4], noteOffsets[7]]; //a major chord
 
-//baseChordRates=[noteOffsets[0]]; //a single note
-//half and double each of these and add all nine to chordRates
+var chordRates=[];
 
-chordRates=[];
-for (i = 0; i < baseChordRates.length; i++) {//each one of these below is an octave. You need at least 2 to do the Shepard tone illusion but 3+ makes it smoother.I find this arrangement is best for solo voices at least
- // chordRates.push(baseChordRates[i]/8);
-  chordRates.push(baseChordRates[i]/4);
-  chordRates.push(baseChordRates[i]/2);
-  chordRates.push(baseChordRates[i]);
-//  chordRates.push(baseChordRates[i]*2);
- // chordRates.push(baseChordRates[i]*4);
-  //chordRates.push(baseChordRates[i]*2);
-   
-}
-//sort this array by size
-chordRates.sort(function(a, b){return a - b});
+function loadChord(chordFile,whichNotes){
+  //first let's define the base chord. Below is a major chord
 
-//const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-//const bus = audioContext.createGain();
-//bus.connect(audioContext.destination);
-sound=[];    
-g=false;
-function loadChord(chordFile){
+  possibleChordRates=[noteOffsets[0], noteOffsets[4], noteOffsets[7]]; //a major chord
+  baseChordRates=[];
+  for (i=0; i<whichNotes.length; i++){
+    baseChordRates.push(possibleChordRates[whichNotes[i]]);
+
+  }
+  //baseChordRates=[noteOffsets[0]]; //a single note
+  //half and double each of these and add all nine to chordRates
+
+  chordRates=[];
+  for (i = 0; i < baseChordRates.length; i++) {//each one of these below is an octave. You need at least 2 to do the Shepard tone illusion but 3+ makes it smoother.I find this arrangement is best for solo voices at least
+  // chordRates.push(baseChordRates[i]/8);
+    chordRates.push(baseChordRates[i]/4);
+    chordRates.push(baseChordRates[i]/2);
+    chordRates.push(baseChordRates[i]);
+  //  chordRates.push(baseChordRates[i]*2);
+  // chordRates.push(baseChordRates[i]*4);
+    //chordRates.push(baseChordRates[i]*2);
+    
+  }
+  //sort this array by size
+  chordRates.sort(function(a, b){return a - b});
+
+  //const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  //const bus = audioContext.createGain();
+  //bus.connect(audioContext.destination);
   if (files[chordFile].centAdjustment) {
     chordPitchShiftFactor = 2 ** (files[chordFile].centAdjustment / 1200); // 1200 cents in an octave
   } 
   console.log(chordFile);
   WebAudiox.loadBuffer(context, chordFile, function(buffer){
     //stop and disconnect any sounds if present
-    for (i = 0; i < chordRates.length; i++) {
+    for (i = 0; i < sound.length; i++) {
       if (sound[i] && sound[i]["bufferSource"]) {//if there's already an instrument playing, stop and disconnect it before we overwrite.
         sound[i]["bufferSource"].stop();
         sound[i]["bufferSource"].disconnect();
       }
-      
+    }
+    sound=[];
+    for (i=0; i<chordRates.length; i++){
       sound[i] ={};
       sound[i]["bufferSource"] = context.createBufferSource();
       sound[i]["gain"] = context.createGain();
@@ -141,55 +195,6 @@ function loadChord(chordFile){
     directionChanged();
   });
 }
-
-function button2() {
-  // if files[chordFile] has a centAdjustment, then we need to adjust the rate
-
-  console.log("button2")
-  if (started == false) {
-    console.log("playing");
-    let clickHereID = document.getElementById("taphere");
-    clickHereID.innerHTML = "you are playing music";
-    
-    loadChord(fileSelect.value);
-
-     
-    started = true;
-  } else{
-    //toggleMute()
-  }
-
-
- }
-
-
-
-
- 
-let stinger={};
-stinger["north"]={};
-stinger["south"]={};
-stinger["east"]={};
-stinger["west"]={};
-
-
-WebAudiox.loadBuffer(context, "north01.wav", function(buffer){
-  stinger["north"]["bufferData"] = buffer;
-});
-
-WebAudiox.loadBuffer(context, "south01.wav", function(buffer){
-  stinger["south"]["bufferData"] = buffer;
-});
-
-WebAudiox.loadBuffer(context, "east01.wav", function(buffer){
-  stinger["east"]["bufferData"] = buffer;
-});
-
-WebAudiox.loadBuffer(context, "west01.wav", function(buffer){
-  stinger["west"]["bufferData"] = buffer;
-});
-
-
 
 
 function playStinger(chordPos){
@@ -328,8 +333,9 @@ function handleOrientation(event) {
       bearing = bearing + 360;
     }
     globalBearing=bearing;
-    directionChanged();
-    
+    if (started==true){
+      directionChanged();
+    }
   }
 
 let globalBearing=0;
@@ -363,13 +369,13 @@ const letter1 = document.getElementById("letter1");
 const letter2 = document.getElementById("letter2");
 
 if ('ontouchstart' in window) {
-  terriblecompass.addEventListener("touchstart", button2);
+  terriblecompass.addEventListener("touchstart", initAudio);
   letter0.addEventListener("touchstart", function() {playStinger(0);});
   letter1.addEventListener("touchstart", function() {playStinger(1);});
   letter2.addEventListener("touchstart", function() {playStinger(2);});
 } else {
   console.log("You're on a PC.")
-  terriblecompass.addEventListener("mousedown", button2);
+  terriblecompass.addEventListener("mousedown", initAudio);
   letter0.addEventListener("mousedown", function() {playStinger(0);});
   letter1.addEventListener("mousedown", function() {playStinger(1);});
   letter2.addEventListener("mousedown", function() {playStinger(2);});
@@ -380,7 +386,7 @@ const chordVolumeId = document.getElementById("chordVolume");
 const stingerVolumeId = document.getElementById("stingerVolume");
 
 
-chordVolumeId.addEventListener("input", function() {//this is the chord volume slider
+chordVolumeId.addEventListener("input", function() {//listener for the chord volume slider
   
   chordVolume = this.value/750;
   console.log(chordVolume, this.value);
@@ -391,7 +397,7 @@ chordVolumeId.addEventListener("input", function() {//this is the chord volume s
 
 });
 
-stingerVolumeId.addEventListener("input", function() {//this is the stinger volume slider
+stingerVolumeId.addEventListener("input", function() {//listener for the stinger volume slider
     
     stingerVolume = this.value/100;
    
@@ -402,7 +408,7 @@ stingerVolumeId.addEventListener("input", function() {//this is the stinger volu
 
     // Add an event listener to listen for changes
     fileSelect.addEventListener("change", function() {
-        loadChord(fileSelect.value);
+        loadChord(fileSelect.value,[1]);
         
         
 
