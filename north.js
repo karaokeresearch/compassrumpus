@@ -3,7 +3,7 @@ let stingerVolume = 1;
 
 var fileSelect = document.getElementById("fileSelect");
 
-portlandDeclination = 15.8333333
+let declination = 0;
 
 
 let context;
@@ -67,7 +67,7 @@ function initAudio(){
 
     console.log("playing");
       let clickHereID = document.getElementById("taphere");
-      clickHereID.innerHTML = "you are playing music";
+      clickHereID.innerHTML = "you might want to turn off auto-rotate";
       
       loadChord(fileSelect.value,[1]);
 
@@ -322,7 +322,7 @@ function handleOrientation(event) {
   // Check if alpha (compass direction) is available
       
     bearing = 360 - event.alpha;
-    bearing = bearing + portlandDeclination;
+    bearing = bearing + declination;
     if (bearing > 360) {
       bearing = bearing - 360;
     }
@@ -355,7 +355,25 @@ function startOrientation(){
   }
 
 }
-  
+
+function getLocation() {
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+     console.log("Geolocation is not supported by this browser.");
+  }
+}
+
+function showPosition(position) {
+  let latitude = position.coords.latitude;
+  let longitude = position.coords.longitude;
+  // Call the function to calculate declination
+  declination = geomag.field(latitude, longitude).declination;
+  document.getElementById("declinationValue").innerHTML=declination;
+  console.log(latitude, longitude, declination);
+}
+
+
 if (debug==true) {
   const slider = document.getElementById("slider");
   // Add an event listener to monitor changes in the slider's value
@@ -366,11 +384,18 @@ if (debug==true) {
   });
 }else{  
     
+  //start capturing orientation data
   if ('DeviceOrientationEvent' in window) {
     startOrientation();
   } else {
     alert('DeviceOrientationEvent is not supported on this browser.');
   }
+
+  //grab location to calculate declination
+  getLocation();
+  
+
+
 }
 
 
