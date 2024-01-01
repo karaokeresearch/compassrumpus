@@ -62,6 +62,7 @@
     </style>
 </head>
 <body>
+
     <div id="frequencyDisplay"><span id="taphere">tap compass to start</span>
         <br><br>
         <!--a slider that goes from 0 to 1000-->
@@ -75,14 +76,17 @@
             <img id="terriblecompass" src="bettercompass.png">
             
         </div>
+        <div id ="declination">
+        Declination: <span id="declinationValue">0</span>°
+        </div>
 
-        Shepardtone 6000 online
+
     </div>
 
     
-<span class = "custom-box" id="letter0">L</span></div>
-<span class = "custom-box" id="letter1">O</span></div>
-<span class = "custom-box" id="letter2">L</span></div>
+<span class = "custom-box" id="letter0">&nbsp;</span></div>
+<span class = "custom-box" id="letter1">&nbsp;</span></div>
+<span class = "custom-box" id="letter2">&nbsp;</span></div>
 <br><br>
     <div> Chorus volume
         <input type="range" min="0" max="100" value="15" class="slider" id="chordVolume">
@@ -93,7 +97,6 @@
 </div>
 <br><br>
 <div>
-
     <select name="fileSelect" id="fileSelect" data-bs-toggle="dropdown">
         <option value="chord_organ.wav">Chord Organ</option>
         <option value="chord_strings_low.wav">Chord Strings Low</option>
@@ -114,6 +117,7 @@
     <script src='webaudiox.js'></script>
     <script src='tuna.js'></script>
     <script src="north.js"></script>
+    <script src="geomag.js"></script>
 
     
 

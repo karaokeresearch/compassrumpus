@@ -26,9 +26,6 @@ function initAudio(){
     // Create lineOut
     lineOut = new WebAudiox.LineOut(context)
 
-
-
-
     overdrive = new tuna.Overdrive({
       outputGain: -1,         //0 to 1+
       drive: 1,              //0 to 1
@@ -339,27 +336,41 @@ function handleOrientation(event) {
   }
 
 let globalBearing=0;
-  
-  if (debug==true) {
 
-    const slider = document.getElementById("slider");
-    // Add an event listener to monitor changes in the slider's value
-    slider.addEventListener("input", function() {
-      var modulus = this.value % 360;
-      globalBearing=modulus;//I hate that we have to do this but I see no other option
-      directionChanged();     
-    });
-  }else{  
+function startOrientation(){
+    
+  if (typeof DeviceMotionEvent.requestPermission === 'function') { 
+      // for IOS devices
+      document.getElementById("log").innerText = "IOS! ";
+      
+      // get device orientation sensor data
+      DeviceOrientationEvent.requestPermission().then(response => {
+          if (response === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation, true);
+          }
+      }).catch(console.error)
+  } else { //Android probably
+      // get device orientation sensor data
+      window.addEventListener('deviceorientation', handleOrientation, true);
+  }
+
+}
+  
+if (debug==true) {
+  const slider = document.getElementById("slider");
+  // Add an event listener to monitor changes in the slider's value
+  slider.addEventListener("input", function() {
+    var modulus = this.value % 360;
+    globalBearing=modulus;//I hate that we have to do this but I see no other option
+    directionChanged();     
+  });
+}else{  
     
   if ('DeviceOrientationEvent' in window) {
-    window.addEventListener('deviceorientationabsolute', handleOrientation); //use this tidier helper function 
+    startOrientation();
   } else {
     alert('DeviceOrientationEvent is not supported on this browser.');
   }
-
-
-
-
 }
 
 
