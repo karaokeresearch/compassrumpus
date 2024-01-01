@@ -33,16 +33,3 @@ function showError(error) {
     }
 }
 
-function calculateDeclination(lat, lon) {
-    // Here, you would make an API call to a service that provides magnetic declination
-    // This is a placeholder; you'll need to replace it with a real API call
-    fetch(`https://api.example.com/declination?lat=${lat}&lon=${lon}`)
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("declination").innerHTML = `Declination: ${data.declination}`;
-    })
-    .catch(error => {
-        document.getElementById("declination").innerHTML = "Error fetching declination data.";
-        console.error('Error:', error);
-    });
-}
