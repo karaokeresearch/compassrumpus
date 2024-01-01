@@ -321,7 +321,7 @@ function directionChanged(){
 function handleOrientation(event) {
   // Check if alpha (compass direction) is available
       
-    bearing = 360 - event.alpha;
+    bearing = event.webkitCompassHeading || Math.abs(event.alpha - 360);
     bearing = bearing + declination;
     if (bearing > 360) {
       bearing = bearing - 360;
@@ -351,7 +351,7 @@ function startOrientation(){
       }).catch(console.error)
   } else { //Android probably
       // get device orientation sensor data
-      window.addEventListener('deviceorientation', handleOrientation, true);
+      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
   }
 
 }
