@@ -229,7 +229,7 @@ function playStinger(chordPos){
    console.log(baseChordRates[i], modulation, chordPitchShiftFactor, "finalRate: " , finalRate, " position: " , position);
     //console.log(finalRate)
 
-
+    // Create a new buffer source for the stinger
     let source = context.createBufferSource();
     let gainNode = context.createGain();
     source.connect(gainNode);
@@ -338,10 +338,11 @@ function handleOrientation(event) {
 let globalBearing=0;
 
 function startOrientation(){
-    
+  console.log("trying to start orientation");
+  let orientationButton = document.getElementById("orientationButton");
+  orientationButton.innerHTML = "ENJOY! TAP THE COMPASS IF ANYTHING GOES WRONG";
   if (typeof DeviceMotionEvent.requestPermission === 'function') { 
       // for IOS devices
-      document.getElementById("log").innerText = "IOS! ";
       
       // get device orientation sensor data
       DeviceOrientationEvent.requestPermission().then(response => {
@@ -384,13 +385,7 @@ if (debug==true) {
   });
 }else{  
     
-  //start capturing orientation data
-  if ('DeviceOrientationEvent' in window) {
-    startOrientation();
-  } else {
-    alert('DeviceOrientationEvent is not supported on this browser.');
-  }
-
+ 
   //grab location to calculate declination
   getLocation();
   
@@ -403,18 +398,35 @@ const myButton = document.getElementById("frequencyDisplay");
 const letter0 = document.getElementById("letter0");
 const letter1 = document.getElementById("letter1");
 const letter2 = document.getElementById("letter2");
+const orientationButton = document.getElementById("orientationButton");
 
+function orientationApprove(){
+  console.log('orientation approved');
+  //start capturing orientation data
+  if ('DeviceOrientationEvent' in window) {
+    startOrientation();
+  } else {
+    alert('DeviceOrientationEvent is not supported on this browser.');
+  }
+}
 if ('ontouchstart' in window) {
   terriblecompass.addEventListener("touchstart", initAudio);
   letter0.addEventListener("touchstart", function() {playStinger(0);});
   letter1.addEventListener("touchstart", function() {playStinger(1);});
   letter2.addEventListener("touchstart", function() {playStinger(2);});
+
+  console.log("ontouchstart!");
+  
+  
+  
 } else {
   console.log("You're on a PC.")
   terriblecompass.addEventListener("mousedown", initAudio);
   letter0.addEventListener("mousedown", function() {playStinger(0);});
   letter1.addEventListener("mousedown", function() {playStinger(1);});
   letter2.addEventListener("mousedown", function() {playStinger(2);});
+
+  console.log("mousedown!");
 }
 
 //set up listeners for the two range-type inputs with chorusVolume and stingerVolume as their ids. Any change we will use to change volume of the chorus and stingers
