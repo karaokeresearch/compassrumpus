@@ -77,7 +77,7 @@
         <br>
         <div class="arrow-down">↓</div>
         <div class="">
-            <img id="terriblecompass" src="bettercompass.png">
+            <img id="terriblecompass" onclick="startOrientation()" src="bettercompass.png">
             
         </div>
         <div id ="declination">
@@ -116,8 +116,6 @@
 <div>Stinger volume
     <input type="range" min="0" max="100" value="100" class="slider" id="stingerVolume">
 </div>
-<br><br>
-<div id ="orientationButton" onclick="startOrientation()">TAP HERE TO TURN ON ORIENTATION</div>
 <br><br>
 <div>
     <select name="fileSelect" id="fileSelect" data-bs-toggle="dropdown">

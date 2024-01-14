@@ -36,61 +36,59 @@ for (i = 0; i < 3; i++) {
 
 
 function initAudio(){
-  if (started == false) {
-    // create WebAudio API context
-    context = new AudioContext();
-    tuna = new Tuna(context);
-    // Create lineOut
-    lineOut = new WebAudiox.LineOut(context)
 
-    overdrive = new tuna.Overdrive({
-      outputGain: -1,         //0 to 1+
-      drive: 1,              //0 to 1
-      curveAmount: 0.1,          //0 to 1
-      algorithmIndex: 2,       //0 to 5, selects one of our drive algorithms
-      bypass: 0
-    });
-    overdrive.connect(lineOut.destination);
+  // create WebAudio API context
+  context = new AudioContext();
+  tuna = new Tuna(context);
+  // Create lineOut
+  lineOut = new WebAudiox.LineOut(context)
+
+  overdrive = new tuna.Overdrive({
+    outputGain: -1,         //0 to 1+
+    drive: 1,              //0 to 1
+    curveAmount: 0.1,          //0 to 1
+    algorithmIndex: 2,       //0 to 5, selects one of our drive algorithms
+    bypass: 0
+  });
+  overdrive.connect(lineOut.destination);
 
 
-    delay = new tuna.Delay({
-      feedback: 0.4,    //0 to 1+
-      delayTime: 300,    //1 to 10000 milliseconds
-      wetLevel: 1,     //0 to 1+
-      dryLevel: 1,       //0 to 1+
-      cutoff: 20000,      //cutoff frequency of the built in lowpass-filter. 20 to 22050
-      bypass: false
-    });
-    delay.connect(overdrive);
+  delay = new tuna.Delay({
+    feedback: 0.4,    //0 to 1+
+    delayTime: 300,    //1 to 10000 milliseconds
+    wetLevel: 1,     //0 to 1+
+    dryLevel: 1,       //0 to 1+
+    cutoff: 20000,      //cutoff frequency of the built in lowpass-filter. 20 to 22050
+    bypass: false
+  });
+  delay.connect(overdrive);
+
+  
+
+
+  WebAudiox.loadBuffer(context, "north01.wav", function(buffer){
+    stinger["north"]["bufferData"] = buffer;
+  });
+
+  WebAudiox.loadBuffer(context, "south01.wav", function(buffer){
+    stinger["south"]["bufferData"] = buffer;
+  });
+
+  WebAudiox.loadBuffer(context, "east01.wav", function(buffer){
+    stinger["east"]["bufferData"] = buffer;
+  });
+
+  WebAudiox.loadBuffer(context, "west01.wav", function(buffer){
+    stinger["west"]["bufferData"] = buffer;
+  });
+
+  console.log("playing");
+  let clickHereID = document.getElementById("taphere");
+  clickHereID.innerHTML = "you might want to turn off auto-rotate";
+  
+  loadChord(fileSelect.value,chordVoicesToLoad);
 
     
-
-
-    WebAudiox.loadBuffer(context, "north01.wav", function(buffer){
-      stinger["north"]["bufferData"] = buffer;
-    });
-
-    WebAudiox.loadBuffer(context, "south01.wav", function(buffer){
-      stinger["south"]["bufferData"] = buffer;
-    });
-
-    WebAudiox.loadBuffer(context, "east01.wav", function(buffer){
-      stinger["east"]["bufferData"] = buffer;
-    });
-
-    WebAudiox.loadBuffer(context, "west01.wav", function(buffer){
-      stinger["west"]["bufferData"] = buffer;
-    });
-
-    console.log("playing");
-    let clickHereID = document.getElementById("taphere");
-    clickHereID.innerHTML = "you might want to turn off auto-rotate";
-    
-    loadChord(fileSelect.value,chordVoicesToLoad);
-
-      
-      started = true;
-  }
 
 }
 
@@ -356,21 +354,23 @@ function handleOrientation(event) {
 let globalBearing=0;
 
 function startOrientation(){
-  console.log("trying to start orientation");
-  let orientationButton = document.getElementById("orientationButton");
-  orientationButton.innerHTML = "ENJOY! TAP THE COMPASS IF ANYTHING GOES WRONG";
-  if (typeof DeviceMotionEvent.requestPermission === 'function') { 
-      // for IOS devices
-      
-      // get device orientation sensor data
-      DeviceOrientationEvent.requestPermission().then(response => {
-          if (response === 'granted') {
-              window.addEventListener('deviceorientation', handleOrientation, true);
-          }
-      }).catch(console.error)
-  } else { //Android probably
-      // get device orientation sensor data
-      window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+  if (started == false) {
+    console.log("trying to start orientation");
+    if (typeof DeviceMotionEvent.requestPermission === 'function') { 
+        // for IOS devices
+        
+        // get device orientation sensor data
+        DeviceOrientationEvent.requestPermission().then(response => {
+            if (response === 'granted') {
+                window.addEventListener('deviceorientation', handleOrientation, true);
+            }
+        }).catch(console.error)
+    } else { //Android probably
+        // get device orientation sensor data
+        window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+    }
+    initAudio();//hopefully we can do this all in one click
+    started=true;
   }
 
 }
@@ -420,7 +420,6 @@ const orientationButton = document.getElementById("orientationButton");
 
 
 if ('ontouchstart' in window) {
-  terriblecompass.addEventListener("touchstart", initAudio);
   letter0.addEventListener("touchstart", function() {playStinger(0);});
   letter1.addEventListener("touchstart", function() {playStinger(1);});
   letter2.addEventListener("touchstart", function() {playStinger(2);});
@@ -431,7 +430,6 @@ if ('ontouchstart' in window) {
   
 } else {
   console.log("You're on a PC.")
-  terriblecompass.addEventListener("mousedown", initAudio);
   letter0.addEventListener("mousedown", function() {playStinger(0);});
   letter1.addEventListener("mousedown", function() {playStinger(1);});
   letter2.addEventListener("mousedown", function() {playStinger(2);});
