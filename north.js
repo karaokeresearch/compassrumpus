@@ -466,7 +466,7 @@ stingerVolumeId.addEventListener("input", function() {//listener for the stinger
 var chordVoicesToLoad = [0,2]
 // Add an event listener to listen for changes
 fileSelect.addEventListener("change", function() {
-    loadChord(fileSelect.value,[chordVoicesToLoad]);
+    loadChord(fileSelect.value,chordVoicesToLoad);
 });
 
 let intervalID;
