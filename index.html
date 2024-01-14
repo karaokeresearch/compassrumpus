@@ -67,7 +67,7 @@
 </head>
 <body>
 
-    <div id="frequencyDisplay"><span id="taphere">tap compass to start</span>
+    <div id="frequencyDisplay"><span id="taphere">Tap compass to start</span>
         <br><br>
         <!--a slider that goes from 0 to 1000-->
         <span id="sliderContainer">
@@ -80,9 +80,7 @@
             <img id="terriblecompass" onclick="startOrientation()" src="bettercompass.png">
             
         </div>
-        <div id ="declination">
-        Declination: <span id="declinationValue">0</span>°
-        </div>
+
 
 
     </div>
@@ -108,6 +106,8 @@
     &nbsp;&nbsp;&nbsp;
     <label for="fifth">Fifth</label>
 </div>
+
+
 <br>
     <div> Chorus volume
         <input type="range" min="0" max="100" value="15" class="slider" id="chordVolume">
@@ -115,6 +115,10 @@
     <br><br>
 <div>Stinger volume
     <input type="range" min="0" max="100" value="100" class="slider" id="stingerVolume">
+</div>
+<br><br>
+<div id ="declination">
+    Enable location services to detect declination
 </div>
 <br><br>
 <div>

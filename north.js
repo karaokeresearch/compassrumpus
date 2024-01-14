@@ -388,7 +388,7 @@ function showPosition(position) {
   let longitude = position.coords.longitude;
   // Call the function to calculate declination
   declination = geomag.field(latitude, longitude).declination;
-  document.getElementById("declinationValue").innerHTML=declination;
+  document.getElementById("declination").innerHTML="Magnetic declination: " + declination + "°";
   console.log(latitude, longitude, declination);
 }
 
