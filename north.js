@@ -69,7 +69,7 @@ function initAudio(){
       let clickHereID = document.getElementById("taphere");
       clickHereID.innerHTML = "you might want to turn off auto-rotate";
       
-      loadChord(fileSelect.value,[1]);
+      loadChord(fileSelect.value,[0,1,2]);
 
       
       started = true;
@@ -132,7 +132,7 @@ for (i = 0; i < 13; i++) {
 
 var chordRates=[];
 
-function loadChord(chordFile,whichNotes){
+function loadChord(chordFile,whichNotes){//whichNotes is an array of numbers that correspond to the notes in the chord. 0 is the root, 1 is the third, 2 is the fifth, etc.
   //first let's define the base chord. Below is a major chord
 
   possibleChordRates=[noteOffsets[0], noteOffsets[4], noteOffsets[7]]; //a major chord
@@ -319,6 +319,7 @@ function directionChanged(){
 
 
 function handleOrientation(event) {
+ 
   // Check if alpha (compass direction) is available
       
     bearing = event.webkitCompassHeading || Math.abs(event.alpha - 360);
@@ -400,15 +401,7 @@ const letter1 = document.getElementById("letter1");
 const letter2 = document.getElementById("letter2");
 const orientationButton = document.getElementById("orientationButton");
 
-function orientationApprove(){
-  console.log('orientation approved');
-  //start capturing orientation data
-  if ('DeviceOrientationEvent' in window) {
-    startOrientation();
-  } else {
-    alert('DeviceOrientationEvent is not supported on this browser.');
-  }
-}
+
 if ('ontouchstart' in window) {
   terriblecompass.addEventListener("touchstart", initAudio);
   letter0.addEventListener("touchstart", function() {playStinger(0);});
@@ -454,14 +447,11 @@ stingerVolumeId.addEventListener("input", function() {//listener for the stinger
 
 
 
-    // Add an event listener to listen for changes
-    fileSelect.addEventListener("change", function() {
-        loadChord(fileSelect.value,[1]);
-        
-        
+// Add an event listener to listen for changes
+fileSelect.addEventListener("change", function() {
+    loadChord(fileSelect.value,[0,2]);
+});
 
-        started=false;
-    });
 let intervalID;
 function startStingerContinuous(interval){
         //if intervalID is already a running interval, clear it
