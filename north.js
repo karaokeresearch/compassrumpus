@@ -17,6 +17,23 @@ stinger["west"]={};
 var overdrivee;
 var delay;  
 
+function changeChordVoicesToLoad(){
+  chordVoicesToLoad = [];
+  for (i = 0; i < 3; i++) {
+    if (document.getElementById("chordVoice" + i).checked == true) {
+      chordVoicesToLoad.push(i);
+    }
+  }
+}
+
+//set up listeners
+for (i = 0; i < 3; i++) {
+  document.getElementById("chordVoice" + i).addEventListener("change", function() {
+    changeChordVoicesToLoad();
+    loadChord(fileSelect.value,chordVoicesToLoad);
+  });
+}
+
 
 function initAudio(){
   if (started == false) {
@@ -66,10 +83,10 @@ function initAudio(){
     });
 
     console.log("playing");
-      let clickHereID = document.getElementById("taphere");
-      clickHereID.innerHTML = "you might want to turn off auto-rotate";
-      
-      loadChord(fileSelect.value,[0,1,2]);
+    let clickHereID = document.getElementById("taphere");
+    clickHereID.innerHTML = "you might want to turn off auto-rotate";
+    
+    loadChord(fileSelect.value,chordVoicesToLoad);
 
       
       started = true;
@@ -446,10 +463,10 @@ stingerVolumeId.addEventListener("input", function() {//listener for the stinger
   });
 
 
-
+var chordVoicesToLoad = [0,2]
 // Add an event listener to listen for changes
 fileSelect.addEventListener("change", function() {
-    loadChord(fileSelect.value,[0,2]);
+    loadChord(fileSelect.value,[chordVoicesToLoad]);
 });
 
 let intervalID;
