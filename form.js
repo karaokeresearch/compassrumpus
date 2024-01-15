@@ -18,9 +18,11 @@ fetch('tunaParams.JSON')
 
 // Function to create form based on effect
 function createEffectForm(effectName, effectParams) {
-    console.log("createEffectForm", effectName, effectParams)
+    const effectNameElement = document.getElementById('effectName');
     const container = document.getElementById('formContainer');
-    container.innerHTML = ''; // Clear previous form
+    effectNameElement.innerHTML = '<h3>' + effectName + '</h3>';
+    container.innerHTML = '';
+
     const form = document.createElement('form');
     form.id = effectName + 'Form';
 
