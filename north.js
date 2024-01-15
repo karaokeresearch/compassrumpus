@@ -1,7 +1,3 @@
-let chordVolume=0.02;
-let stingerVolume = 1;
-
-var fileSelect = document.getElementById("fileSelect");
 
 let declination = 0;
 
@@ -69,7 +65,7 @@ function changeChordVoicesToLoad(){
 for (i = 0; i < 3; i++) {
   document.getElementById("chordVoice" + i).addEventListener("change", function() {
     changeChordVoicesToLoad();
-    loadChord(fileSelect.value,chordVoicesToLoad);
+    loadChord(chordFileSelect.value,chordVoicesToLoad);
   });
 }
 
@@ -126,9 +122,9 @@ function initAudio(){
 
   console.log("playing");
   let clickHereID = document.getElementById("taphere");
-  clickHereID.innerHTML = "you might want to turn off auto-rotate";
+  clickHereID.innerHTML = "Playing.";
   
-  loadChord(fileSelect.value,chordVoicesToLoad);
+  loadChord(chordFileSelect.value,chordVoicesToLoad);
 
     
 
@@ -343,7 +339,7 @@ function directionChanged(){
 
 
 
-  HTMLconsole.innerHTML = parseInt(modulus) + "°";
+  HTMLconsole.innerHTML = ", Heading: " + parseInt(modulus) + "°";
   let finalDirection = compassDirectionToSpecificName(modulus);
   let letter=[];
   letter[0] = document.getElementById("letter0");
@@ -417,7 +413,7 @@ function showPosition(position) {
   let longitude = position.coords.longitude;
   // Call the function to calculate declination
   declination = geomag.field(latitude, longitude).declination;
-  document.getElementById("declination").innerHTML="Magnetic declination: " + declination + "°";
+  document.getElementById("declination").innerHTML="Declination: " + declination + "°";
   console.log(latitude, longitude, declination);
 }
 
@@ -470,6 +466,11 @@ if ('ontouchstart' in window) {
 const chordVolumeId = document.getElementById("chordVolume");
 const stingerVolumeId = document.getElementById("stingerVolume");
 
+//we do it this way so that the defaults can be set in HTML instead of here
+let chordVolume=chordVolumeId.value/750;
+let stingerVolume = stingerVolumeId.value/100;
+
+
 
 chordVolumeId.addEventListener("input", function() {//listener for the chord volume slider
   
@@ -491,10 +492,19 @@ stingerVolumeId.addEventListener("input", function() {//listener for the stinger
 
 
 var chordVoicesToLoad = [0,2]
+
+var chordFileSelect = document.getElementById("chordFileSelect");
 // Add an event listener to listen for changes
-fileSelect.addEventListener("change", function() {
-    loadChord(fileSelect.value,chordVoicesToLoad);
+chordFileSelect.addEventListener("change", function() {
+    loadChord(chordFileSelect.value,chordVoicesToLoad);
 });
+
+var stingerFileSelect = document.getElementById("stingerFileSelect");
+// Add an event listener to listen for changes
+stingerFileSelect.addEventListener("change", function() {
+    loadStinger(stingerFileSelect.value);
+});
+
 
 let intervalID;
 function startStingerContinuous(interval){

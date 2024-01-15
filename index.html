@@ -67,13 +67,16 @@
 </head>
 <body>
 
-    <div id="frequencyDisplay"><span id="taphere">Tap compass to start</span>
+    <div id="frequencyDisplay"><span id="taphere">Tap compass to start. </span>
+        <span id ="declination">
+        Enable location services to detect declination.
+        </span><span id="console"></span>
         <br><br>
         <!--a slider that goes from 0 to 1000-->
         <span id="sliderContainer">
         </span>
 
-        <span id="console">360</span>
+        
         <br>
         <div class="arrow-down">↓</div>
         <div class="">
@@ -110,33 +113,37 @@
 
 <br>
     <div> Chorus volume
-        <input type="range" min="0" max="100" value="15" class="slider" id="chordVolume">
+        <input type="range" min="0" max="100" value="75" class="slider" id="chordVolume">
     </div>
     <br><br>
-<div>Stinger volume
-    <input type="range" min="0" max="100" value="100" class="slider" id="stingerVolume">
-</div>
-<br><br>
-<div id ="declination">
-    Enable location services to detect declination
+<div>Sting volume
+    <input type="range" min="0" max="100" value="15" class="slider" id="stingerVolume">
 </div>
 <br><br>
 <div>
-    <select name="fileSelect" id="fileSelect" data-bs-toggle="dropdown">
+    Auto-sting &nbsp;&nbsp;
+    <input type="checkbox" id="autoplay" name="autoplay" value="autoplay">  &nbsp;&nbsp;
+    <input class="slider" type ="range" min="20" max="1500" value="300" id="autoplayms">
+    <span id="autoplaymsConsole">300ms</span>
+</div>
+
+<br><br>
+<div>Chorus:
+    <select name="chordFileSelect" id="chordFileSelect" data-bs-toggle="dropdown">
         <option value="chord_organ.wav">Chord Organ</option>
         <option value="chord_strings_low.wav">Chord Strings Low</option>
         <option value="chord_strings_high.wav">Chord Strings High</option>
         <option value="chord_vox_low.wav">Chord Vox Low</option>
         <option value="chord_vox_high.wav">Chord Vox High</option>
         <option value="chord_8_bit.wav">Chord 8 Bit</option>
-    </select>
+    </select> &nbsp;
+    Sting:
+    <select name="stingerFileSelect" id="stingerFileSelect" data-bs-toggle="dropdown">
+        <option value="Classic">Classic</option>
+        <option value="Mallet">Mallets</option>
+    </select>   
 <br><br><br><br>
-<div>
-    Auto-play: &nbsp;&nbsp;
-    <input type="checkbox" id="autoplay" name="autoplay" value="autoplay">  &nbsp;&nbsp;
-    <input class="slider" type ="range" min="20" max="5000" value="5000" id="autoplayms">
-    <span id="autoplaymsConsole">5000ms</span>
-</div>
+
 
 </div>
     <script src='webaudiox.js'></script>
