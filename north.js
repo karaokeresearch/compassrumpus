@@ -101,13 +101,14 @@ if (window.location.search.includes("debug=true")) {
 
 
 //format is file, degree at which it's meant to be played, cent adjustment
+//position 0° aka North is A, 90° aka East is C, 180° aka South is D#, 270° aka West is F#
 let files={
       "chord_organ.wav": {position:0, centAdjustment:0},
-      "chord_strings_low.wav": {position:0, centAdjustment:0},
-      "chord_strings_high.wav": {position:0, centAdjustment:0},
-      "chord_vox_low.wav": {position:0, centAdjustment:40},
+      "chord_strings_low.wav": {position:0, centAdjustment:10},
+      "chord_strings_high.wav": {position:0, centAdjustment:2},
+      "chord_vox_low.wav": {position:0, centAdjustment:32},
       "chord_vox_high.wav": {position:0, centAdjustment:0},
-      "chord_8_bit.wav": {position:0, centAdjustment:0},
+      "chord_8_bit.wav": {position:0, centAdjustment:14},
       "north01.wav": {position: 0, centAdjustment: 0},
       "east01.wav": {position:90, centAdjustment: 0},
       "south01.wav": {position:180, centAdjustment: 0},
