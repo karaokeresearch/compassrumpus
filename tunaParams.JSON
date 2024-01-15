@@ -1,0 +1,105 @@
+ {
+    "Chorus": {
+        "rate": {"default": 1.5, "min": 0.01, "max": 8},
+        "feedback": {"default": 0.4, "min": 0, "max": 1},
+        "depth": {"default": 0.7, "min": 0, "max": 1},
+        "delay": {"default": 0.0045, "min": 0, "max": 1},
+        "bypass": {"default": false}
+    },
+    "Delay": {
+        "feedback": {"default": 0.45, "min": 0, "max": 1},
+        "delayTime": {"default": 100, "min": 1, "max": 10000},
+        "wetLevel": {"default": 0.5, "min": 0, "max": 1},
+        "dryLevel": {"default": 1, "min": 0, "max": 1},
+        "cutoff": {"default": 20000, "min": 20, "max": 22050},
+        "bypass": {"default": false}
+    },
+    "Phaser": {
+        "rate": {"default": 0.1, "min": 0.01, "max": 8},
+        "depth": {"default": 0.6, "min": 0, "max": 1},
+        "feedback": {"default": 0.7, "min": 0, "max": 1},
+        "stereoPhase": {"default": 40, "min": 0, "max": 180},
+        "baseModulationFrequency": {"default": 700, "min": 500, "max": 1500},
+        "bypass": {"default": false}
+    },
+    "Overdrive": {
+        "outputGain": {"default": -9.154, "min": -42, "max": 0},
+        "drive": {"default": 0.197, "min": 0, "max": 1},
+        "curveAmount": {"default": 0.979, "min": 0, "max": 1},
+        "algorithmIndex": {"default": 0, "min": 0, "max": 5, "step": 1},
+        "bypass": {"default": false}
+    },
+    "Compressor": {
+        "threshold": {"default": -20, "min": -100, "max": 0},
+        "makeupGain": {"default": 1, "min": 1, "max": 20},
+        "attack": {"default": 1, "min": 0, "max": 1000},
+        "release": {"default": 250, "min": 0, "max": 3000},
+        "ratio": {"default": 4, "min": 1, "max": 20},
+        "knee": {"default": 5, "min": 0, "max": 40},
+        "automakeup": {"default": true},
+        "bypass": {"default": false}
+    },
+    "Convolver": {
+        "highCut": {"default": 22050, "min": 20, "max": 22050},
+        "lowCut": {"default": 20, "min": 20, "max": 22050},
+        "dryLevel": {"default": 1, "min": 0, "max": 1},
+        "wetLevel": {"default": 1, "min": 0, "max": 1},
+        "level": {"default": 1, "min": 0, "max": 1},
+        "impulse": {"default": "impulses/impulse_rev.wav"},
+        "bypass": {"default": false}
+    },
+    "Filter": {
+        "frequency": {"default": 800, "min": 20, "max": 22050},
+        "Q": {"default": 1, "min": 0.001, "max": 100},
+        "gain": {"default": 0, "min": -40, "max": 40},
+        "filterType": {"default": "lowpass", "options": "lowpass, highpass, bandpass, lowshelf, highshelf, peaking, notch, allpass"},
+        "bypass": {"default": false}
+    },
+    "Cabinet": {
+        "makeupGain": {"default": 1, "min": 0, "max": 20},
+        "impulsePath": {"default": "impulses/impulse_guitar.wav"},
+        "bypass": {"default": false}
+    },
+    "Tremolo": {
+        "intensity": {"default": 0.3, "min": 0, "max": 1},
+        "rate": {"default": 5, "min": 0.001, "max": 8},
+        "stereoPhase": {"default": 0, "min": 0, "max": 180},
+        "bypass": {"default": false}
+    },
+    "WahWah": {
+        "automode": {"default": true},
+        "baseFrequency": {"default": 0.153, "min": 0, "max": 1},
+        "excursionOctaves": {"default": 3.3, "min": 1, "max": 6},
+        "sweep": {"default": 0.35, "min": 0, "max": 1},
+        "resonance": {"default": 19, "min": 1, "max": 100},
+        "sensitivity": {"default": -0.5, "min": -1, "max": 1},
+        "bypass": {"default": false}
+    },
+    "Bitcrusher": {
+        "bits": {"default": 4, "min": 1, "max": 16, "step": 1},
+        "normfreq": {"default": 0.1, "min": 0, "max": 1},
+        "bufferSize": {"default": 4096, "min": 256, "max": 16384},
+        "bypass": {"default": false}
+    },
+    "MoogFilter": {
+        "cutoff": {"default": 0.065, "min": 0, "max": 1},
+        "resonance": {"default": 3.5, "min": 0, "max": 4},
+        "bufferSize": {"default": 4096, "min": 256, "max": 16384},
+        "bypass": {"default": false}
+    },
+    "PingPongDelay": {
+        "wetLevel": {"default": 0.5, "min": 0, "max": 1},
+        "feedback": {"default": 0.3, "min": 0, "max": 1},
+        "delayTimeLeft": {"default": 200, "min": 1, "max": 10000},
+        "delayTimeRight": {"default": 400, "min": 1, "max": 10000},
+        "bypass": {"default": false}
+    },
+    "Panner": {
+        "pan": {"default": 0, "min": -1, "max": 1},
+        "bypass": {"default": false}
+    },
+    "Gain": {
+        "gain": {"default": 0, "min": 0, "max": 1.5},
+        "bypass": {"default": false}
+    }
+}
