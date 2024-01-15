@@ -99,7 +99,7 @@
         "bypass": {"default": false}
     },
     "Gain": {
-        "gain": {"default": 0, "min": 0, "max": 1.5},
+        "gain": {"default": 0, "min": 0, "max": 10},
         "bypass": {"default": false}
     }
 }
