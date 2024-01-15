@@ -14,6 +14,45 @@ stinger["north"]={};
 stinger["south"]={};
 stinger["east"]={};
 stinger["west"]={};
+//format is file, degree at which it's meant to be played, cent adjustment
+//position 0° aka North is A, 90° aka East is C, 180° aka South is D#, 270° aka West is F#
+let files={
+  "chord_organ.wav": {position:0, centAdjustment:0},
+  "chord_strings_low.wav": {position:0, centAdjustment:10},
+  "chord_strings_high.wav": {position:0, centAdjustment:2},
+  "chord_vox_low.wav": {position:0, centAdjustment:32},
+  "chord_vox_high.wav": {position:0, centAdjustment:0},
+  "chord_8_bit.wav": {position:0, centAdjustment:14},
+  "north01.wav": {position: 0, centAdjustment: 0},
+  "east01.wav": {position:90, centAdjustment: 0},
+  "south01.wav": {position:180, centAdjustment: 0},
+  "west01.wav": {position:270, centAdjustment: 0},
+  "tubularBellsHitA.wav": {position:0, centAdjustment:0},
+  "vibraphoneHitC.wav": {position:90, centAdjustment:0},
+  "xylophoneHitDsharp.wav": {position:180, centAdjustment:0},
+  "celestaHitFsharp.wav": {position:270, centAdjustment:0}
+  };
+
+
+let stingerSets={
+  "Classic":{
+    "north": "north01.wav",
+    "east": "east01.wav",
+    "south": "south01.wav",
+    "west": "west01.wav",
+  },
+  "Mallet":{
+    "north": "tubularBellsHitA.wav",
+    "east": "vibraphoneHitC.wav",
+    "south": "xylophoneHitDsharp.wav",
+    "west": "celestaHitFsharp.wav",
+  }
+}
+
+
+
+
+
 var overdrivee;
 var delay;  
 
@@ -34,6 +73,24 @@ for (i = 0; i < 3; i++) {
   });
 }
 
+
+function loadStinger(stingerSet){
+  WebAudiox.loadBuffer(context, stingerSets[stingerSet]["north"], function(buffer){
+    stinger["north"]["bufferData"] = buffer;
+  });
+
+  WebAudiox.loadBuffer(context, stingerSets[stingerSet]["east"], function(buffer){
+    stinger["east"]["bufferData"] = buffer;
+  });
+
+  WebAudiox.loadBuffer(context, stingerSets[stingerSet]["south"], function(buffer){
+    stinger["south"]["bufferData"] = buffer;
+  });
+
+  WebAudiox.loadBuffer(context, stingerSets[stingerSet]["west"], function(buffer){
+    stinger["west"]["bufferData"] = buffer;
+  });
+}
 
 function initAudio(){
 
@@ -64,23 +121,8 @@ function initAudio(){
   delay.connect(overdrive);
 
   
+  loadStinger("Classic");
 
-
-  WebAudiox.loadBuffer(context, "north01.wav", function(buffer){
-    stinger["north"]["bufferData"] = buffer;
-  });
-
-  WebAudiox.loadBuffer(context, "south01.wav", function(buffer){
-    stinger["south"]["bufferData"] = buffer;
-  });
-
-  WebAudiox.loadBuffer(context, "east01.wav", function(buffer){
-    stinger["east"]["bufferData"] = buffer;
-  });
-
-  WebAudiox.loadBuffer(context, "west01.wav", function(buffer){
-    stinger["west"]["bufferData"] = buffer;
-  });
 
   console.log("playing");
   let clickHereID = document.getElementById("taphere");
@@ -100,20 +142,6 @@ if (window.location.search.includes("debug=true")) {
 }
 
 
-//format is file, degree at which it's meant to be played, cent adjustment
-//position 0° aka North is A, 90° aka East is C, 180° aka South is D#, 270° aka West is F#
-let files={
-      "chord_organ.wav": {position:0, centAdjustment:0},
-      "chord_strings_low.wav": {position:0, centAdjustment:10},
-      "chord_strings_high.wav": {position:0, centAdjustment:2},
-      "chord_vox_low.wav": {position:0, centAdjustment:32},
-      "chord_vox_high.wav": {position:0, centAdjustment:0},
-      "chord_8_bit.wav": {position:0, centAdjustment:14},
-      "north01.wav": {position: 0, centAdjustment: 0},
-      "east01.wav": {position:90, centAdjustment: 0},
-      "south01.wav": {position:180, centAdjustment: 0},
-      "west01.wav": {position:270, centAdjustment: 0},
-      };
 
 
 
