@@ -78,7 +78,6 @@ container.appendChild(form);
 
 // Event listener for dropdown change to create form
 document.getElementById('effectSelect').addEventListener('change', function(data) {
-    console.log("change");
     const selectedEffect = this.value;
     const effectParams = data;
     createEffectForm(selectedEffect, tunaParams[selectedEffect]);

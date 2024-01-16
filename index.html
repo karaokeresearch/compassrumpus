@@ -57,7 +57,23 @@
         input[type="checkbox"] {
             transform: scale(3); /* Adjust the scale factor as needed */
         }
-                
+               
+        
+        form div {
+            margin-bottom: 10px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        .two-columns {
+            column-count: 2;        /* This creates two columns */
+            column-gap: 20px;       /* Adjusts the gap between columns */
+            /* Optional Styles Below */
+            width: 95%;            /* Adjust width as needed */
+            padding: 10px;          /* Padding around the content */
+            border: 0.25vw solid #ccc; /* Border for visual separation */
+        }
+
     </style>
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -141,7 +157,18 @@
         <option value="Classic">Classic</option>
         <option value="Mallet">Mallets</option>
     </select>   
-<br><br><br><br>
+<br><br>
+<label for="effectSelect">Choose an Effect:</label>
+<select id="effectSelect">
+    <option value="">Select an effect</option>
+    <!-- Options will be added dynamically -->
+</select>
+
+<div id = "effectName"></div>
+<div id="formContainer" class="two-columns">
+    <!-- Form will be generated here -->
+</div>
+
 
 
 </div>
