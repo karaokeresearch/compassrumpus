@@ -643,11 +643,13 @@ container.appendChild(form);
 }
 
 let fxNode;
-// Event listener for dropdown change to create form
+// Event listener for "Choose an effect" dropdown change to create form
 document.getElementById('effectSelect').addEventListener('change', function(data) {
     const selectedEffect = this.value;
     const effectParams = data;
     createEffectForm(selectedEffect, tunaParams[selectedEffect]);
+
+    //let's load an effect
     console.log("here:", selectedEffect, tunaParams[selectedEffect])
     //go through defaultParams and grab the default value for each property. Create a new object that is just the default values
     let defaultParams = {};
@@ -686,4 +688,8 @@ document.getElementById('formContainer').addEventListener('input', function(even
         value = event.target.value;
     }
     console.log(event.target.id + ' has changed to ' + value);
+    //a new variable for whatever is to the right of the underscore in event.target.id 
+    let param = event.target.id.split('_')[1];
+    //set the value of the param in the fxNode to the value of the input
+    fxNode[param] = value;
 });
