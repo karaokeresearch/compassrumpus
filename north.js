@@ -2,9 +2,7 @@
 let declination = 0;
 
 
-let context;
-let tuna;
-let lineOut;
+
 let stinger={};
 stinger["north"]={};
 stinger["south"]={};
@@ -49,9 +47,6 @@ let stingerSets={
 
 
 
-var overdrivee;
-var delay;  
-
 function changeChordVoicesToLoad(){
   chordVoicesToLoad = [];
   for (i = 0; i < 3; i++) {
@@ -88,6 +83,19 @@ function loadStinger(stingerSet){
   });
 }
 
+let context;
+let tuna;
+let lineOut;
+let preFXbus;
+
+let overdrive;
+let delay;
+
+//remember that you have to work backwards with audio nodes. We create them in reverse below.
+//stinger -> shared stinger gain stage -> pre fx bus gain stage -> lineOut
+//when the effect is applied:
+//stinger -> shared stinger gain stage -> pre fx bus gain stage -> fx -> lineOut
+
 function initAudio(){
 
   // create WebAudio API context
@@ -96,6 +104,8 @@ function initAudio(){
   // Create lineOut
   lineOut = new WebAudiox.LineOut(context)
 
+  //fx bus
+    
   overdrive = new tuna.Overdrive({
     outputGain: -1,         //0 to 1+
     drive: 1,              //0 to 1
@@ -115,6 +125,15 @@ function initAudio(){
     bypass: false
   });
   delay.connect(overdrive);
+
+  //create a pre-fx bus
+
+
+  preFXbus = context.createGain();
+  preFXbus.connect(delay);
+  //create a stinger bus
+
+
 
   
   loadStinger("Classic");
@@ -219,7 +238,7 @@ function loadChord(chordFile,whichNotes){//whichNotes is an array of numbers tha
       sound[i]["bufferSource"] = context.createBufferSource();
       sound[i]["gain"] = context.createGain();
       sound[i]["bufferSource"].connect(sound[i]["gain"]);
-      sound[i]["gain"].connect(context.destination);
+      sound[i]["gain"].connect(preFXbus);
       sound[i]["bufferSource"].loop = true;
       sound[i]["gain"].gain.value = chordVolume;
       sound[i]["bufferSource"].playbackRate.value = chordRates[i] * chordPitchShiftFactor;
@@ -273,8 +292,9 @@ function playStinger(chordPos){
     let source = context.createBufferSource();
     let gainNode = context.createGain();
     source.connect(gainNode);
-    gainNode.connect(delay);
+    gainNode.connect(preFXbus);
 
+    // I want each instance of the sound to set its own volume so we don't mess with the beautiful feedback dynamics we've got going in the
     source.buffer = stinger[directionToSing]["bufferData"];
     source.playbackRate.value = finalRate;
     
@@ -622,11 +642,37 @@ function createEffectForm(effectName, effectParams) {
 container.appendChild(form);
 }
 
+let fxNode;
 // Event listener for dropdown change to create form
 document.getElementById('effectSelect').addEventListener('change', function(data) {
     const selectedEffect = this.value;
     const effectParams = data;
     createEffectForm(selectedEffect, tunaParams[selectedEffect]);
+    console.log("here:", selectedEffect, tunaParams[selectedEffect])
+    //go through defaultParams and grab the default value for each property. Create a new object that is just the default values
+    let defaultParams = {};
+    for (const param in effectParams) {
+        defaultParams[param] = effectParams[param]['default'];
+    }
+    
+
+    //if fxNode is already connected to something, disconnect it
+    if (fxNode) {
+      fxNode.disconnect();
+    }
+    //create the effect node. A new Tuna instance of type selectedEffect with params from tunaParams[selectedEffect]
+    fxNode = new tuna[selectedEffect](defaultParams);
+
+    //connect the effect node to lineOut
+    fxNode.connect(lineOut.destination);
+    //disconnect the preFXbus from lineOut if connected
+    if (preFXbus) {
+      preFXbus.disconnect();
+    }
+    //connect the preFXbus to the fxNode
+    preFXbus.connect(fxNode);
+
+
 });
 
 // Event listener for form input changes
