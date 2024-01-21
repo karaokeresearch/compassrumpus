@@ -665,8 +665,8 @@ document.getElementById('effectSelect').addEventListener('change', function(data
     //create the effect node. A new Tuna instance of type selectedEffect with params from tunaParams[selectedEffect]
     fxNode = new tuna[selectedEffect](defaultParams);
 
-    //connect the effect node to lineOut
-    fxNode.connect(lineOut.destination);
+    //connect the effect node to lineOut --actually let's do this basic overdrive so we always have some buffer
+    fxNode.connect(overdrive);
     //disconnect the preFXbus from lineOut if connected
     if (preFXbus) {
       preFXbus.disconnect();
