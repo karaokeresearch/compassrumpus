@@ -149,12 +149,6 @@ function initAudio(){
 
 }
 
-let debug=false
-//if querystring contains debug=true then set the innerHTML of sliderContainer to this: '<input type="range" min="0" max="1000" value="360" class="slider" onmousedown="button1()" id="slider">'
-if (window.location.search.includes("debug=true")) {
-  document.getElementById("sliderContainer").innerHTML = '<input type="range" min="0" max="1000" value="360" class="slider" id="slider">';
-  debug=true
-}
 
 
 
@@ -438,23 +432,12 @@ function showPosition(position) {
 }
 
 
-if (debug==true) {
-  const slider = document.getElementById("slider");
-  // Add an event listener to monitor changes in the slider's value
-  slider.addEventListener("input", function() {
-    var modulus = this.value % 360;
-    globalBearing=modulus;//I hate that we have to do this but I see no other option
-    directionChanged();     
-  });
-}else{  
-    
+
+
+
  
-  //grab location to calculate declination
-  getLocation();
-  
-
-
-}
+//grab location to calculate declination
+getLocation();
 
 
 const myButton = document.getElementById("frequencyDisplay");
@@ -478,6 +461,17 @@ if ('ontouchstart' in window) {
   letter0.addEventListener("mousedown", function() {playStinger(0);});
   letter1.addEventListener("mousedown", function() {playStinger(1);});
   letter2.addEventListener("mousedown", function() {playStinger(2);});
+  
+  document.addEventListener('mousemove', function(event) {
+    var mouseX = event.clientX; // X coordinate of the mouse pointer
+    //let's make this into a defacto slider so you can use the instrument on PC without a compass
+    var sliderValue = mouseX / (window.innerWidth / 1000);
+    sliderValue = sliderValue % 360;
+    globalBearing=sliderValue;
+    directionChanged();
+  });
+  
+
 
   console.log("mousedown!");
 }
