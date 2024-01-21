@@ -677,6 +677,7 @@ document.getElementById('effectSelect').addEventListener('change', function(data
 
 });
 
+
 // Event listener for form input changes
 document.getElementById('formContainer').addEventListener('input', function(event) {
     var value;
@@ -690,6 +691,11 @@ document.getElementById('formContainer').addEventListener('input', function(even
     console.log(event.target.id + ' has changed to ' + value);
     //a new variable for whatever is to the right of the underscore in event.target.id 
     let param = event.target.id.split('_')[1];
+
+    //use the Number constructor to determine if the value is a number and if so, force it to be a number
+    if (Number(value)) {
+      value = Number(value);
+    }
     //set the value of the param in the fxNode to the value of the input
     fxNode[param] = value;
 });
