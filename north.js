@@ -573,7 +573,7 @@ fetch('tunaParams.JSON')
     .then(response => response.json())
     .then(data => {
         tunaParams = data;
-        //sort the instruments alphabetically
+        //sort the instruments alphabetically. Maybe we'll alphbetize tunaParams.JSON some day but for now I'm matching the sort in the docs at https://github.com/Theodeus/tuna/wiki/Node-examples
         let sortedTunaParams = {};
         Object.keys(tunaParams).sort().forEach(function(key) {
           sortedTunaParams[key] = tunaParams[key];
@@ -607,6 +607,8 @@ function createEffectForm(effectName, effectParams) {
     label.textContent = param + ': ';
     inputDiv.appendChild(label);
 
+
+
     // Determine input type and create input element
     let input;
     //if the param has a true or false as the default, create a checkbox
@@ -627,6 +629,8 @@ function createEffectForm(effectName, effectParams) {
     } else if (effectParams[param].hasOwnProperty('min') && effectParams[param].hasOwnProperty('max')) {
         // Slider or number input
         input = document.createElement('input');
+        //it should be in the class "slider"
+        input.classList.add("slider");
         input.type = 'range';
         input.min = effectParams[param]['min'];
         input.max = effectParams[param]['max'];
@@ -641,6 +645,11 @@ function createEffectForm(effectName, effectParams) {
 
     input.id = effectName + '_' + param;
     inputDiv.appendChild(input);
+    //let's put a span in here to show the value of the param
+    const span = document.createElement('span');
+    span.id = effectName + '_' + param + '_value';
+    span.innerHTML =  "&nbsp;&nbsp;&nbsp;" +  effectParams[param]['default'];
+    inputDiv.appendChild(span);
 
     form.appendChild(inputDiv);
 }
@@ -653,6 +662,7 @@ let fxNode;
 document.getElementById('effectSelect').addEventListener('change', function(data) {
     const selectedEffect = this.value;
     const effectParams = data;
+    //draw the form
     createEffectForm(selectedEffect, tunaParams[selectedEffect]);
 
     //let's load an effect
@@ -684,12 +694,14 @@ document.getElementById('effectSelect').addEventListener('change', function(data
 });
 
 
-// Event listener for form input changes
+// Event listener for effect param changes
 document.getElementById('formContainer').addEventListener('input', function(event) {
     var value;
+    var bool;
     if (event.target.type === 'checkbox') {
         // For checkboxes, use the 'checked' property
         value = event.target.checked;
+        bool = true;
     } else {
         // For other input types, use the 'value' property
         value = event.target.value;
@@ -699,9 +711,31 @@ document.getElementById('formContainer').addEventListener('input', function(even
     let param = event.target.id.split('_')[1];
 
     //use the Number constructor to determine if the value is a number and if so, force it to be a number
+    //We have to do this because tuna wants numerical values to be numbers, not strings
     if (Number(value)) {
-      value = Number(value);
+      var valueToSet = Number(value);
+    } else{
+      var valueToSet = value;
     }
     //set the value of the param in the fxNode to the value of the input
-    fxNode[param] = value;
+    fxNode[param] = valueToSet;
+
+    //update the span that shows the value of the param
+    let span = document.getElementById(event.target.id + "_value");
+    //if the value is a number, change the value to have 5 decimal points max, otherwise show it with as few decimals as possible
+    
+    if (value ==true && bool == true) {
+      console.log("TRUE")
+      valueToPrint = "true";
+      span.innerHTML = valueToPrint;
+    }else if (value ==false && bool == true) {
+      console.log("FALSE")
+      valueToPrint = "false";
+    } else if (Number(value)) {
+      valueToPrint= parseFloat(Number(value).toFixed(3));
+    } else {
+      valueToPrint = value;
+    }
+    span.innerHTML = "&nbsp;&nbsp;&nbsp;" +  valueToPrint ;
+
 });
