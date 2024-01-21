@@ -130,7 +130,7 @@ function initAudio(){
 
 
   preFXbus = context.createGain();
-  preFXbus.connect(delay);
+  preFXbus.connect(lineOut.destination);
   //create a stinger bus
 
 
@@ -573,118 +573,145 @@ fetch('tunaParams.JSON')
           sortedTunaParams[key] = tunaParams[key];
         });
         
-        const select = document.getElementById('effectSelect');
-        for (const effect in sortedTunaParams) {
-            let option = document.createElement('option');
-            option.value = effect;
-            option.textContent = effect;
-            select.appendChild(option);
-        }
+        // get all elements with a class of "effectSelect" and populate each one with the effects
+        var elements = document.querySelectorAll('.effectSelect');
+        // Iterate over the NodeList
+        elements.forEach(function(element) {
+            for (const effect in sortedTunaParams) {
+                let option = document.createElement('option');
+                option.value = effect;
+                option.textContent = effect;
+                element.appendChild(option);
+            }
+        });
     });
 
 // Function to create form based on effect
-function createEffectForm(effectName, effectParams) {
-    const effectNameElement = document.getElementById('effectName');
-    const container = document.getElementById('formContainer');
-    effectNameElement.innerHTML = '<h3>' + effectName + '</h3>';
+function createEffectForm(effectName, effectParams, formID) {
+  console.log(formID, " is the form ID")
+    const container = document.getElementById('effectParams' + formID);
     container.innerHTML = '';
 
     const form = document.createElement('form');
-    form.id = effectName + 'Form';
+    form.id = form + formID;
 
     for (const param in effectParams) {
-        const inputDiv = document.createElement('div');
+      const inputDiv = document.createElement('div');
 
-    // Create label
-    const label = document.createElement('label');
-    label.htmlFor = effectName + '_' + param;
-    label.textContent = param + ': ';
-    inputDiv.appendChild(label);
+      // Create label
+      const label = document.createElement('label');
+      label.htmlFor = "fx" + formID + '_' + param;
+      label.textContent = param + ': ';
+      inputDiv.appendChild(label);
 
 
 
-    // Determine input type and create input element
-    let input;
-    //if the param has a true or false as the default, create a checkbox
-    if (effectParams[param]['default'] === true || effectParams[param]['default'] === false) {
-        input = document.createElement('input');
-        input.type = 'checkbox';
-        input.checked = effectParams[param]['default'];
-    } else if (effectParams[param].hasOwnProperty('options')) {
-        // Dropdown for options
-        input = document.createElement('select');
-        const options = effectParams[param]['options'].split(', ');
-        options.forEach(opt => {
-            const option = document.createElement('option');
-            option.value = opt;
-            option.textContent = opt;
-            input.appendChild(option);
-        });
-    } else if (effectParams[param].hasOwnProperty('min') && effectParams[param].hasOwnProperty('max')) {
-        // Slider or number input
-        input = document.createElement('input');
-        //it should be in the class "slider"
-        input.classList.add("slider");
-        input.type = 'range';
-        input.min = effectParams[param]['min'];
-        input.max = effectParams[param]['max'];
-        input.step = effectParams[param]['step'] || 'any';
-        input.value = effectParams[param]['default'];
-    } else {
-        // Text input
-        input = document.createElement('input');
-        input.type = 'text';
-        input.value = effectParams[param]['default'];
-    }
+      // Determine input type and create input element
+      let input;
+      //if the param has a true or false as the default, create a checkbox
+      if (effectParams[param]['default'] === true || effectParams[param]['default'] === false) {
+          input = document.createElement('input');
+          input.type = 'checkbox';
+          input.checked = effectParams[param]['default'];
+      } else if (effectParams[param].hasOwnProperty('options')) {
+          // Dropdown for options
+          input = document.createElement('select');
+          const options = effectParams[param]['options'].split(', ');
+          options.forEach(opt => {
+              const option = document.createElement('option');
+              option.value = opt;
+              option.textContent = opt;
+              input.appendChild(option);
+          });
+      } else if (effectParams[param].hasOwnProperty('min') && effectParams[param].hasOwnProperty('max')) {
+          // Slider or number input
+          input = document.createElement('input');
+          //it should be in the class "slider"
+          input.classList.add("slider");
+          input.type = 'range';
+          input.min = effectParams[param]['min'];
+          input.max = effectParams[param]['max'];
+          input.step = effectParams[param]['step'] || 'any';
+          input.value = effectParams[param]['default'];
+      } else {
+          // Text input
+          input = document.createElement('input');
+          input.type = 'text';
+          input.value = effectParams[param]['default'];
+      }
 
-    input.id = effectName + '_' + param;
-    inputDiv.appendChild(input);
-    //let's put a span in here to show the value of the param
-    const span = document.createElement('span');
-    span.id = effectName + '_' + param + '_value';
-    span.innerHTML =  "&nbsp;&nbsp;&nbsp;" +  effectParams[param]['default'];
-    inputDiv.appendChild(span);
+      input.id = "fx" + formID +  '_' + param;
+      inputDiv.appendChild(input);
+      //let's put a span in here to show the value of the param
+      const span = document.createElement('span');
+      span.id = "fx" + formID +  + '_' + param + '_value';
+      span.innerHTML =  "&nbsp;&nbsp;&nbsp;" +  effectParams[param]['default'];
+      inputDiv.appendChild(span);
 
-    form.appendChild(inputDiv);
-}
+      form.appendChild(inputDiv);
+  }
 
 container.appendChild(form);
 }
 
-let fxNode;
+let fxNode=[];
 // Event listener for "Choose an effect" dropdown change to create form
-document.getElementById('effectSelect').addEventListener('change', function(data) {
-    const selectedEffect = this.value;
-    const effectParams = data;
-    //draw the form
-    createEffectForm(selectedEffect, tunaParams[selectedEffect]);
+var elements = document.querySelectorAll('.effectSelect');
+// Iterate over the NodeList
+elements.forEach(function(element) {
+    element.addEventListener('change', function(data) {
+      const selectedEffect = this.value;
+      const effectParams = data;
+      //extract which fx number it is and place that into a variable
 
-    //let's load an effect
-    console.log("here:", selectedEffect, tunaParams[selectedEffect])
-    //go through defaultParams and grab the default value for each property. Create a new object that is just the default values
-    let defaultParams = {};
-    for (const param in effectParams) {
-        defaultParams[param] = effectParams[param]['default'];
-    }
-    
+      //extract the number from the id of the select element using regex to extract the number off the end
+      let idNumber = parseInt(this.id.match(/\d+/)[0]);
+      //convert to int
 
-    //if fxNode is already connected to something, disconnect it
-    if (fxNode) {
-      fxNode.disconnect();
-    }
-    //create the effect node. A new Tuna instance of type selectedEffect with params from tunaParams[selectedEffect]
-    fxNode = new tuna[selectedEffect](defaultParams);
+      
+      //draw the form
+      createEffectForm(selectedEffect, tunaParams[selectedEffect], idNumber);
 
-    //connect the effect node to lineOut --actually let's do this basic overdrive so we always have some buffer
-    fxNode.connect(overdrive);
-    //disconnect the preFXbus from lineOut if connected
-    if (preFXbus) {
+      //let's load an effect
+      //console.log("here:", selectedEffect, tunaParams[selectedEffect])
+      //go through defaultParams and grab the default value for each property. Create a new object that is just the default values
+      let defaultParams = {};
+      for (const param in effectParams) {
+          defaultParams[param] = effectParams[param]['default'];
+      }
+      
+
+      //if fxNode is already connected to something, disconnect it
+      if (fxNode[idNumber]) {
+        fxNode[idNumber].disconnect();
+      }
+      //create the effect node. A new Tuna instance of type selectedEffect with params from tunaParams[selectedEffect]
+      fxNode[idNumber] = new tuna[selectedEffect](defaultParams);
+
+      //connect the effect node to lineOut --actually let's do this basic overdrive so we always have some buffer
+      fxNode[idNumber].connect(overdrive);
+
+      let lastNum = null;
+
+      for (let i = fxNode.length - 1; i >= 0; i--) {
+        if (fxNode[i] !== undefined) {
+          //first, disconnect it
+          fxNode[i].disconnect();
+          if (lastNum = null) {
+            //connect it to lineOut.destination
+            fxNode[i].connect(lineOut.destination);
+          } else {//connect it to the next fxNode
+            fxNode[i].connect(fxNode[lastNum]);
+          }
+          lastNum = i;
+        }
+      }
+      //disconnect the preFXbus from whatever it's attached to
       preFXbus.disconnect();
-    }
-    //connect the preFXbus to the fxNode
-    preFXbus.connect(fxNode);
+      //connect the preFXbus to the first fxNode
+      preFXbus.connect(fxNode[lastNum]);
 
-
+    });
 });
 
 

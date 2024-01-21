@@ -65,7 +65,7 @@
         label {
             margin-right: 10px;
         }
-        .two-columns {
+        .fx {
           /*  column-count: 2;        /* This creates two columns */
           /*  column-gap: 20px;       /* Adjusts the gap between columns */
             /* Optional Styles Below */
@@ -158,17 +158,40 @@
         <option value="Mallet">Mallets</option>
     </select>   
 <br><br>
-<label for="effectSelect">Choose an Effect:</label>
-<select id="effectSelect">
-    <option value="">Select an effect</option>
-    <!-- Options will be added dynamically -->
-</select>
 
-<div id = "effectName"></div>
-<div id="formContainer" class="two-columns">
-    <!-- Form will be generated here -->
+
+<div id="formContainer" class="fx" style = "background-color: #fcc2d8">
+    <select id="effectSelect1" class="effectSelect">
+        <option value="">Select an effect</option>
+        <!-- Options will be added dynamically -->
+    </select>
+    <div id="effectParams1">
+        <!-- Form will be generated here -->
+    </div>  
 </div>
 
+<div id="formContainer" class="fx" style = "background-color: #fae1eb">
+    <select id="effectSelect2" class="effectSelect">
+        <option value="">Select an effect</option>
+        <!-- Options will be added dynamically -->
+    </select>
+    <div id="effectParams2">
+        <!-- Form will be generated here -->
+    </div>  
+</div>
+
+
+<div id="formContainer" class="fx" style = "background-color: #fcf0f5">
+    <select id="effectSelect3" class="effectSelect">
+        <option value="">Select an effect</option>
+        <!-- Options will be added dynamically -->
+    </select>
+    <div id="effectParams3">
+        <!-- Form will be generated here -->
+    </div>  
+</div>
+
+<br><br><br><br><br><br>
 
 
 </div>
