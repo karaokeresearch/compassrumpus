@@ -573,8 +573,14 @@ fetch('tunaParams.JSON')
     .then(response => response.json())
     .then(data => {
         tunaParams = data;
+        //sort the instruments alphabetically
+        let sortedTunaParams = {};
+        Object.keys(tunaParams).sort().forEach(function(key) {
+          sortedTunaParams[key] = tunaParams[key];
+        });
+        
         const select = document.getElementById('effectSelect');
-        for (const effect in data) {
+        for (const effect in sortedTunaParams) {
             let option = document.createElement('option');
             option.value = effect;
             option.textContent = effect;
