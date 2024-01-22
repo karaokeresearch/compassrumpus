@@ -644,7 +644,7 @@ function createEffectForm(effectName, effectParams, formID) {
       inputDiv.appendChild(input);
       //let's put a span in here to show the value of the param
       const span = document.createElement('span');
-      span.id = "fx" + formID +  + '_' + param + '_value';
+      span.id = "fx" + formID + '_' + param + '_value';
       span.innerHTML =  "&nbsp;&nbsp;&nbsp;" +  effectParams[param]['default'];
       inputDiv.appendChild(span);
 
@@ -655,11 +655,15 @@ container.appendChild(form);
 }
 
 let fxNode=[];
-// Event listener for "Choose an effect" dropdown change to create form
+// Event listener for "Choose an effect" dropdown change. When it happens, we create a form and wire up the signal path through the fx
 var elements = document.querySelectorAll('.effectSelect');
 // Iterate over the NodeList
 elements.forEach(function(element) {
-    element.addEventListener('change', function(data) {
+    // Add event listener to each "Choose an effect" dropdown
+    element.addEventListener('change', function(data) { 
+      
+      //function to run when the dropdown changes
+      
       const selectedEffect = this.value;
       const effectParams = data;
       //extract which fx number it is and place that into a variable
@@ -668,7 +672,7 @@ elements.forEach(function(element) {
       let idNumber = parseInt(this.id.match(/\d+/)[0]);
       //convert to int
 
-      
+      console.log("idNumber: " , idNumber)
       //draw the form
       createEffectForm(selectedEffect, tunaParams[selectedEffect], idNumber);
 
@@ -694,16 +698,21 @@ elements.forEach(function(element) {
       let lastNum = null;
 
       for (let i = fxNode.length - 1; i >= 0; i--) {
-        if (fxNode[i] !== undefined) {
+        console.log("lastNum: " , lastNum, i)
+        if (fxNode[i] !== undefined) {//there's an fxNode here
+          console.log("fxNode[i] is defined");
           //first, disconnect it
           fxNode[i].disconnect();
-          if (lastNum = null) {
+
+          //now, connect it to the next fxNode or lineOut
+          if (lastNum == null) {
             //connect it to lineOut.destination
             fxNode[i].connect(lineOut.destination);
           } else {//connect it to the next fxNode
             fxNode[i].connect(fxNode[lastNum]);
           }
           lastNum = i;
+          
         }
       }
       //disconnect the preFXbus from whatever it's attached to
@@ -715,48 +724,56 @@ elements.forEach(function(element) {
 });
 
 
-// Event listener for effect param changes
-document.getElementById('formContainer').addEventListener('input', function(event) {
-    var value;
-    var bool;
-    if (event.target.type === 'checkbox') {
-        // For checkboxes, use the 'checked' property
-        value = event.target.checked;
-        bool = true;
-    } else {
-        // For other input types, use the 'value' property
-        value = event.target.value;
-    }
-    console.log(event.target.id + ' has changed to ' + value);
-    //a new variable for whatever is to the right of the underscore in event.target.id 
-    let param = event.target.id.split('_')[1];
+// Select all elements with class 'fx'
+var fxElements = document.querySelectorAll('.fx');
 
-    //use the Number constructor to determine if the value is a number and if so, force it to be a number
-    //We have to do this because tuna wants numerical values to be numbers, not strings
-    if (Number(value)) {
-      var valueToSet = Number(value);
-    } else{
-      var valueToSet = value;
-    }
-    //set the value of the param in the fxNode to the value of the input
-    fxNode[param] = valueToSet;
+// Iterate over each element and add the event listener
+fxElements.forEach(function(element) {
 
-    //update the span that shows the value of the param
-    let span = document.getElementById(event.target.id + "_value");
-    //if the value is a number, change the value to have 5 decimal points max, otherwise show it with as few decimals as possible
-    
-    if (value ==true && bool == true) {
-      console.log("TRUE")
-      valueToPrint = "true";
-      span.innerHTML = valueToPrint;
-    }else if (value ==false && bool == true) {
-      console.log("FALSE")
-      valueToPrint = "false";
-    } else if (Number(value)) {
-      valueToPrint= parseFloat(Number(value).toFixed(3));
-    } else {
-      valueToPrint = value;
-    }
-    span.innerHTML = "&nbsp;&nbsp;&nbsp;" +  valueToPrint ;
+    element.addEventListener('input', function(event) {
 
+        //if a slider changes, change the value of the param in the fxNode
+      
+        console.log("event.target.id: ", event.target.id);
+        //extract the number from the id of the select element using regex to extract the number off the end
+        let idNumber = parseInt(event.target.id.match(/\d+/)[0]);
+        
+        var value;
+        var bool;
+        if (event.target.type === 'checkbox') {
+            // For checkboxes, use the 'checked' property
+            value = event.target.checked;
+            bool = true;
+        } else {
+            // For other input types, use the 'value' property
+            value = event.target.value;
+        }
+        console.log(event.target.id + ' has changed to ' + value);
+
+        //a new variable for whatever is to the right of the underscore in event.target.id 
+        let param = event.target.id.split('_')[1];
+
+        console.log("param: " , param)
+
+        // Determine if the value is a number and force it to be a number if so
+        var valueToSet = Number(value) ? Number(value) : value;
+
+        // Set the value of the param in the fxNode to the value of the input
+        fxNode[idNumber][param] = valueToSet;
+
+        // Update the span that shows the value of the param
+        console.log(event.target.id + "_value")
+        let span = document.getElementById(event.target.id + "_value");
+        
+        // Format the displayed value
+        let valueToPrint;
+        if (bool) {
+            valueToPrint = value ? "true" : "false";
+        } else if (Number(value)) {
+            valueToPrint = parseFloat(Number(value).toFixed(3));
+        } else {
+            valueToPrint = value;
+        }
+        span.innerHTML = "&nbsp;&nbsp;&nbsp;" +  valueToPrint;
+    });
 });
