@@ -129,7 +129,10 @@ function initAudio(){
   //create a pre-fx bus
 
 
-  preFXbus = context.createGain();
+//  preFXbus = context.createGain();
+//ceate a panner node called preFXbus, panner because it will force the mono inputs to stereo
+  preFXbus = context.createPanner();
+
   preFXbus.connect(lineOut.destination);
   //create a stinger bus
 
@@ -457,7 +460,7 @@ if ('ontouchstart' in window) {
   
   
 } else {
-  console.log("You're on a PC.")
+  alert("PC detected. This instrument requires a compass sensor and is designed for mobile browsers.")
   letter0.addEventListener("mousedown", function() {playStinger(0);});
   letter1.addEventListener("mousedown", function() {playStinger(1);});
   letter2.addEventListener("mousedown", function() {playStinger(2);});
