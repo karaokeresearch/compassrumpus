@@ -126,12 +126,9 @@ function initAudio(){
   });
   delay.connect(overdrive);
 
-  //create a pre-fx bus
-
-
-//  preFXbus = context.createGain();
-//ceate a panner node called preFXbus, panner because it will force the mono inputs to stereo
-  preFXbus = context.createPanner();
+  //create a pre-fx bus. Everything runs into this before hitting the FX in order to have a bus but also:
+  //ceate a panner node called preFXbus, panner because it will force the mono inputs to stereo
+  preFXbus = context.createStereoPanner();
 
   preFXbus.connect(lineOut.destination);
   //create a stinger bus
