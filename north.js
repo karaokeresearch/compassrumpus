@@ -474,7 +474,7 @@ if ('ontouchstart' in window) {
   
   
 } else {
-  alert("PC detected. This instrument requires a compass sensor and is designed for mobile browsers.")
+  alert("PC detected. This instrument is designed for a compass sensor on mobile browsers. But you can still use it with your mouse. Click on the compass.")
   letter0.addEventListener("mousedown", function() {playStinger(0);});
   letter1.addEventListener("mousedown", function() {playStinger(1);});
   letter2.addEventListener("mousedown", function() {playStinger(2);});
