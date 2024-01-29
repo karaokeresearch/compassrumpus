@@ -184,8 +184,14 @@ for (i = 0; i < 13; i++) {
 }
 
 var chordRates=[];
+/**
+  * loadChord: loads a chord into the sound array
+  * @param {string} chordFile - the name of the file to load
+  * @param {array} whichNotes - an array of numbers that correspond to the notes in the chord. 0 is the root, 1 is the third, 2 is the fifth, etc.
+  * @return {array} chordRates - an array of numbers that correspond to the playback rates of the notes in the chord. 1 is the root, 2 is the third, 4 is the fifth, etc.
+ */
 
-function loadChord(chordFile,whichNotes){//whichNotes is an array of numbers that correspond to the notes in the chord. 0 is the root, 1 is the third, 2 is the fifth, etc.
+function loadChord(chordFile,whichNotes){
   //first let's define the base chord. Below is a major chord
 
   possibleChordRates=[noteOffsets[0], noteOffsets[4], noteOffsets[7]]; //a major chord
@@ -248,11 +254,11 @@ function loadChord(chordFile,whichNotes){//whichNotes is an array of numbers tha
 
 
 function playStinger(chordPos){
-  console.log("chordPos: " , chordPos)
+  //console.log("chordPos: " , chordPos)
   let direction = compassDirectionToSpecificName(globalBearing);
   //if chordPos is a number higher than the length of baseChordRates, do nothing
   if (chordPos >= direction.length) { //you clicked a blank square
-    console.log("HARUMPH!")
+   // console.log("HARUMPH!")
   }else{
     directionToSing=direction[chordPos];
     //if N, change to north, etc.
@@ -278,8 +284,8 @@ function playStinger(chordPos){
     //play a single note
     i = chordPos;
     var finalRate=baseChordRates[i] * modulation * chordPitchShiftFactor;
-    console.log("global Bearing: " , globalBearing, "mySliderValue: " , mySliderValue, "directionToSing: " , directionToSing);
-   console.log(baseChordRates[i], modulation, chordPitchShiftFactor, "finalRate: " , finalRate, " position: " , position);
+    //console.log("global Bearing: " , globalBearing, "mySliderValue: " , mySliderValue, "directionToSing: " , directionToSing);
+    //console.log(baseChordRates[i], modulation, chordPitchShiftFactor, "finalRate: " , finalRate, " position: " , position);
     //console.log(finalRate)
 
     // Create a new buffer source for the stinger
@@ -290,8 +296,19 @@ function playStinger(chordPos){
 
     // I want each instance of the sound to set its own volume so we don't mess with the beautiful feedback dynamics we've got going in the
     source.buffer = stinger[directionToSing]["bufferData"];
-    source.playbackRate.value = finalRate;
+    //try to do a source.playbackRate.value = finalRate;
+    //if that fails, print to console.log all the values involved so I can diagnose
+    //console.log(baseChordRates[i]);
+    try {
+      source.playbackRate.value = finalRate;
+    }
+    catch(err) {
+      console.log("whoopsie:", err.message + " when setting up the playbackRate.value for the stinger.")
+      //console.log(finalRate);
+      //and all the values that went into computing it: baseChordRates[i] * modulation * chordPitchShiftFactor;;
     
+      //console.log("baseChordRates[" +i +"] (" + baseChordRates[i] + ") * " + modulation + " * " + chordPitchShiftFactor + " = " + finalRate);
+    }
     gainNode.gain.value = stingerVolume;
     
     source.onended = function () {
