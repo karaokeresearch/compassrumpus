@@ -737,6 +737,42 @@ elements.forEach(function(element) {
       //connect the preFXbus to the first fxNode
       preFXbus.connect(fxNode[lastNum]);
 
+      //iterate through all of the effects. For each one, grab all of the parameter names as well. Combine them like so
+      //"Compressor → threshold" then use that to first clear out then populate the magParamSelect0 magParamSelect1 and magParamSelect2 dropdowns. Be sure to take note of what their property is and then set it to the default value of that dropdown
+      let magParamSelect = [];
+      magParamSelect[0] = document.getElementById("magParamSelect0");
+      magParamSelect[1] = document.getElementById("magParamSelect1");
+      magParamSelect[2] = document.getElementById("magParamSelect2");
+      
+      //iterate through each currently loaded effect
+      for (i = 0; i < fxNode.length; i++) {
+        //if there's an effect loaded at this index
+        if (fxNode[i]) {
+          //grab the name of the effect from the HTML dropdown that corresponds to this index
+          let fxName = document.getElementById("effectSelect" + i).value;
+          //grab all of the parameters of the effect from the tunaParams JSON
+          let fxParams = Object.keys(tunaParams[fxName]);
+          //iterate through each parameter of the effect
+          for (j = 0; j < fxParams.length; j++) {
+            //grab the name of the parameter
+            let paramName = fxParams[j];
+            //combine the effect name and the parameter name
+            let combinedName = fxName + " → " + paramName;
+            //create an option element
+            let option = document.createElement('option');
+            //set the value of the option element to the combined name
+            option.value = combinedName;
+            //set the text of the option element to the combined name
+            option.textContent = combinedName;
+            //append the option element to the magParamSelect dropdown
+            console.log(option)
+            magParamSelect[i].appendChild(option);
+
+          }
+        }
+      }
+
+
     });
 });
 
