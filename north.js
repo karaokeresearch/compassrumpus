@@ -385,6 +385,36 @@ function directionChanged(){
   } 
     //HTMLconsole.innerHTML = sliderValue + "<br>modulus: " + modulus + "<br>modulation: " + modulation + "<br>fade: " + fade + '<br>1-fade: ' + (1-fade) + '<br>hertz: ' + hertz + " hz <br>---<br>";//+ allVolumesHTML;
 
+  //if any of magneticAlignment dropdowns are not blank, change the panner position. Basically if N is set and the bearing is at 0, the parameter value  should be at max. If the bearing is 180, the value should be at min, etc. If the effect value uses a step, round to the nearest step. Remember that every selector has a class of "magneticAlignment"
+  let magneticAlignment = document.querySelectorAll('.magneticAlignment');
+
+  //iterate through each one. If you find one set to not blank, then determine the ID of the associated effect
+  magneticAlignment.forEach(function(element) {
+    if (element.value) {
+      //console.log("element.id: " , element.id);
+      //replace the "magneticAlignment" with "fx" and you have the id of the associated effect slider
+      let effectID = element.id.replace("magneticAlignment", "fx");
+      //console.log("effectID: " , effectID);
+      //ok now let's grab the value of the element
+      let value = element.value;
+      //convert this into a degree. N = 0, S=180, E=90, W=270
+      let degree;
+      if (value == "N") {
+        degree = 0;
+      } if (value == "S") {
+        degree = 180;
+      }
+      if (value == "E") {
+        degree = 90;
+      }
+      if (value == "W") {
+        degree = 270;
+      }
+      //ok now the closer the current bearing is to the degree, the closer the value should be to the max. So let's calculate and print out a percentage that indicates how closely the bearing matches the target. If we're facing north degree is set to south this should be 0% for instance
+      let percentage = 1-(Math.abs(modulus - degree)/180);
+      console.log("percentage: " , percentage);
+    }
+});
 
 }
 
@@ -620,6 +650,8 @@ function createEffectForm(effectName, effectParams, formID) {
       if (effectParams[param].hasOwnProperty('min') && effectParams[param].hasOwnProperty('max')) {
         const dropdown = document.createElement('select');
         dropdown.id = "magneticAlignment" + formID + '_' + param;
+        //set their class to "magneticAlignment"
+        dropdown.classList.add("magneticAlignment");
         const options = ["", "N", "S", "E", "W"];
         options.forEach(opt => {
             const option = document.createElement('option');
@@ -671,6 +703,7 @@ function createEffectForm(effectName, effectParams, formID) {
           input.type = 'text';
           input.value = effectParams[param]['default'];
       }
+      //add the class "fxinput" to the input
 
       input.id = "fx" + formID +  '_' + param;
       inputDiv.appendChild(input);
@@ -758,55 +791,58 @@ elements.forEach(function(element) {
 
 
 // Select all elements with class 'fx'
-var fxElements = document.querySelectorAll('.fx');
+var fxElements = document.querySelectorAll('.fx');//everything in the fx class
 
 // Iterate over each element and add the event listener
 fxElements.forEach(function(element) {
-
+    //if the element doesn't also have the class of magneticAlignment, add the event listener
     element.addEventListener('input', function(event) {
 
-        //if a slider changes, change the value of the param in the fxNode
-      
-        console.log("event.target.id: ", event.target.id);
-        //extract the number from the id of the select element using regex to extract the number off the end
-        let idNumber = parseInt(event.target.id.match(/\d+/)[0]);
+        //check first to see if the element id begins with the string "magneticAlignment". If it does, do nothing
+        if (!event.target.id.startsWith("magneticAlignment")) {
+          //if a slider changes, change the value of the param in the fxNode
         
-        var value;
-        var bool;
-        if (event.target.type === 'checkbox') {
-            // For checkboxes, use the 'checked' property
-            value = event.target.checked;
-            bool = true;
-        } else {
-            // For other input types, use the 'value' property
-            value = event.target.value;
+          console.log("event.target.id: ", event.target.id);
+          //extract the number from the id of the select element using regex to extract the number off the end
+          let idNumber = parseInt(event.target.id.match(/\d+/)[0]);
+          
+          var value;
+          var bool;
+          if (event.target.type === 'checkbox') {
+              // For checkboxes, use the 'checked' property
+              value = event.target.checked;
+              bool = true;
+          } else {
+              // For other input types, use the 'value' property
+              value = event.target.value;
+          }
+          console.log(event.target.id + ' has changed to ' + value);
+
+          //a new variable for whatever is to the right of the underscore in event.target.id 
+          let param = event.target.id.split('_')[1];
+
+          console.log("param: " , param)
+
+          // Determine if the value is a number and force it to be a number if so
+          var valueToSet = Number(value) ? Number(value) : value;
+
+          // Set the value of the param in the fxNode to the value of the input
+          fxNode[idNumber][param] = valueToSet;
+
+          // Update the span that shows the value of the param
+          console.log(event.target.id + "_value")
+          let span = document.getElementById(event.target.id + "_value");
+          
+          // Format the displayed value
+          let valueToPrint;
+          if (bool) {
+              valueToPrint = value ? "true" : "false";
+          } else if (Number(value)) {
+              valueToPrint = parseFloat(Number(value).toFixed(3));
+          } else {
+              valueToPrint = value;
+          }
+          span.innerHTML = "&nbsp;&nbsp;&nbsp;" +  valueToPrint;
         }
-        console.log(event.target.id + ' has changed to ' + value);
-
-        //a new variable for whatever is to the right of the underscore in event.target.id 
-        let param = event.target.id.split('_')[1];
-
-        console.log("param: " , param)
-
-        // Determine if the value is a number and force it to be a number if so
-        var valueToSet = Number(value) ? Number(value) : value;
-
-        // Set the value of the param in the fxNode to the value of the input
-        fxNode[idNumber][param] = valueToSet;
-
-        // Update the span that shows the value of the param
-        console.log(event.target.id + "_value")
-        let span = document.getElementById(event.target.id + "_value");
-        
-        // Format the displayed value
-        let valueToPrint;
-        if (bool) {
-            valueToPrint = value ? "true" : "false";
-        } else if (Number(value)) {
-            valueToPrint = parseFloat(Number(value).toFixed(3));
-        } else {
-            valueToPrint = value;
-        }
-        span.innerHTML = "&nbsp;&nbsp;&nbsp;" +  valueToPrint;
     });
 });
