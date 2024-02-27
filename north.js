@@ -423,9 +423,14 @@ function directionChanged(){
       //console.log(slider.id+"---" + min, max, range, newValue, percentage);
       slider.value = newValue;
       //now let's trigger the input event on the slider
-      //slider.dispatchEvent(new Event('input'));
-      //update the <span that's like: fx0_rate_value for the id as an example
-      }
+      // Manually dispatch an input event after changing the value
+      let event = new Event('input', {
+        bubbles: true,
+        cancelable: true,
+      });
+      slider.dispatchEvent(event);
+
+    }
 });
 
 }
@@ -812,9 +817,10 @@ fxElements.forEach(function(element) {
 
         //check first to see if the element id begins with the string "magneticAlignment". If it does, do nothing
         if (!event.target.id.startsWith("magneticAlignment")) {
+          //console.log("a change has been detected to the slider:" , event.target.id);
           //if a slider changes, change the value of the param in the fxNode
         
-          console.log("event.target.id: ", event.target.id);
+          //console.log("event.target.id: ", event.target.id);
           //extract the number from the id of the select element using regex to extract the number off the end
           let idNumber = parseInt(event.target.id.match(/\d+/)[0]);
           
@@ -828,12 +834,12 @@ fxElements.forEach(function(element) {
               // For other input types, use the 'value' property
               value = event.target.value;
           }
-          console.log(event.target.id + ' has changed to ' + value);
+          //console.log(event.target.id + ' has changed to ' + value);
 
           //a new variable for whatever is to the right of the underscore in event.target.id 
           let param = event.target.id.split('_')[1];
 
-          console.log("param: " , param)
+          //console.log("param: " , param)
 
           // Determine if the value is a number and force it to be a number if so
           var valueToSet = Number(value) ? Number(value) : value;
@@ -842,7 +848,7 @@ fxElements.forEach(function(element) {
           fxNode[idNumber][param] = valueToSet;
 
           // Update the span that shows the value of the param
-          console.log(event.target.id + "_value")
+          //console.log(event.target.id + "_value")
           let span = document.getElementById(event.target.id + "_value");
           
           // Format the displayed value
