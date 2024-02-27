@@ -411,9 +411,21 @@ function directionChanged(){
         degree = 270;
       }
       //ok now the closer the current bearing is to the degree, the closer the value should be to the max. So let's calculate and print out a percentage that indicates how closely the bearing matches the target. If we're facing north degree is set to south this should be 0% for instance
-      let percentage = 1-(Math.abs(modulus - degree)/180);
-      console.log("percentage: " , percentage);
-    }
+      let percentage = Math.abs(1-(Math.abs(modulus - degree)/180));
+      //console.log("percentage: " , percentage);
+      //now let's set the value of the effect slider to the percentage. Essentially we want to find the min and max of the slider and set the value to the percentage of the difference between the two
+      let slider = document.getElementById(effectID);
+      let min = slider.min * 1;
+      let max = slider.max * 1;
+      let range = max - min;
+      let newValue = min + (range * percentage);
+       //now let's set the value of the effect slider to the percentage. Essentially we want to find the min and max of the slider and set the value to the percentage of the difference between the two
+      //console.log(slider.id+"---" + min, max, range, newValue, percentage);
+      slider.value = newValue;
+      //now let's trigger the input event on the slider
+      //slider.dispatchEvent(new Event('input'));
+      //update the <span that's like: fx0_rate_value for the id as an example
+      }
 });
 
 }
