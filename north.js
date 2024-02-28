@@ -309,7 +309,7 @@ function playStinger(chordPos){
     
       //console.log("baseChordRates[" +i +"] (" + baseChordRates[i] + ") * " + modulation + " * " + chordPitchShiftFactor + " = " + finalRate);
     }
-    gainNode.gain.value = stingerVolume;
+    gainNode.gain.value = stingVolume;
     
     source.onended = function () {
       source.disconnect();
@@ -394,7 +394,10 @@ function directionChanged(){
       //console.log("element.id: " , element.id);
       //replace the "magneticAlignment" with "fx" and you have the id of the associated effect slider
       let effectID = element.id.replace("magneticAlignment", "fx");
-      //console.log("effectID: " , effectID);
+      //if the ID doesn't contain a number, replace the fx with nothing
+      if (!effectID.match(/\d+/)) {
+        effectID = effectID.replace("fx_", "");
+      }
       //ok now let's grab the value of the element
       let value = element.value;
       //convert this into a degree. N = 0, S=180, E=90, W=270
@@ -540,20 +543,20 @@ if ('ontouchstart' in window) {
   console.log("mousedown!");
 }
 
-//set up listeners for the two range-type inputs with chorusVolume and stingerVolume as their ids. Any change we will use to change volume of the chorus and stingers
+//set up listeners for the two range-type inputs with chorusVolume and stingVolume as their ids. Any change we will use to change volume of the chorus and stingers
 const chordVolumeId = document.getElementById("chordVolume");
-const stingerVolumeId = document.getElementById("stingerVolume");
+const stingVolumeId = document.getElementById("stingVolume");
 
 //we do it this way so that the defaults can be set in HTML instead of here
 let chordVolume=chordVolumeId.value/750;
-let stingerVolume = stingerVolumeId.value/100;
+let stingVolume = stingVolumeId.value/100;
 
 
 
 chordVolumeId.addEventListener("input", function() {//listener for the chord volume slider
   
   chordVolume = this.value/750;
-  console.log(chordVolume, this.value);
+ // console.log(chordVolume, this.value);
   for (i = 0; i < sound.length; i++) {
     sound[i]["gain"].gain.value=chordVolume;
   }
@@ -561,9 +564,9 @@ chordVolumeId.addEventListener("input", function() {//listener for the chord vol
 
 });
 
-stingerVolumeId.addEventListener("input", function() {//listener for the stinger volume slider
+stingVolumeId.addEventListener("input", function() {//listener for the stinger volume slider
     
-    stingerVolume = this.value/100;
+    stingVolume = this.value/100;
    
   
   });

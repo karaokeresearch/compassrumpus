@@ -4,11 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>compass rumpus @ noise.bike</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-
-        }
         
         #terriblecompass {
             z-index:-1;
@@ -128,15 +123,19 @@
 
 
 <br>
-    <div> Chorus volume
+    <div> 
+    <!--   <select id="magneticAlignment_chordVolume" class="magneticAlignment"><option value=""></option><option value="N">N</option><option value="S">S</option><option value="E">E</option><option value="W">W</option></select>
+        &nbsp; -->Chorus volume
         <input type="range" min="0" max="100" value="75" class="slider" id="chordVolume">
     </div>
     <br><br>
-<div>Sting volume
-    <input type="range" min="0" max="100" value="15" class="slider" id="stingerVolume">
+<div> <!--  <select id="magneticAlignment_stingVolume" class="magneticAlignment"><option value=""></option><option value="N">N</option><option value="S">S</option><option value="E">E</option><option value="W">W</option></select>
+    &nbsp; -->Sting volume
+    <input type="range" min="0" max="100" value="15" class="slider" id="stingVolume">
 </div>
 <br><br>
-<div>
+<div><select id="magneticAlignment_autoplayms" class="magneticAlignment"><option value=""></option><option value="N">N</option><option value="S">S</option><option value="E">E</option><option value="W">W</option></select>
+    &nbsp;
     Auto-sting &nbsp;&nbsp;
     <input type="checkbox" id="autoplay" name="autoplay" value="autoplay">  &nbsp;&nbsp;
     <input class="slider" type ="range" min="20" max="1500" value="300" id="autoplayms">
