@@ -8,7 +8,7 @@
     },
     "Delay": {
         "feedback": {"default": 0.45, "min": 0, "max": 1},
-        "delayTime": {"default": 100, "min": 1, "max": 10000},
+        "delayTime": {"default": 100, "min": 1, "max": 1500},
         "wetLevel": {"default": 0.5, "min": 0, "max": 1},
         "dryLevel": {"default": 1, "min": 0, "max": 1},
         "cutoff": {"default": 20000, "min": 20, "max": 22050},
@@ -17,13 +17,13 @@
     "Phaser": {
         "rate": {"default": 0.1, "min": 0.01, "max": 8},
         "depth": {"default": 0.6, "min": 0, "max": 1},
-        "feedback": {"default": 0.7, "min": 0, "max": 1},
+        "feedback": {"default": 0.7, "min": 0, "max": 0.9},
         "stereoPhase": {"default": 40, "min": 0, "max": 180},
         "baseModulationFrequency": {"default": 700, "min": 500, "max": 1500},
         "bypass": {"default": false}
     },
     "Overdrive": {
-        "outputGain": {"default": -9.154, "min": -42, "max": 0},
+        "outputGain": {"default": -9.154, "min": -45.5, "max": 0},
         "drive": {"default": 0.197, "min": 0, "max": 1},
         "curveAmount": {"default": 0.979, "min": 0, "max": 1},
         "algorithmIndex": {"default": 0, "min": 0, "max": 5, "step": 1},
@@ -50,7 +50,7 @@
     },
     "Filter": {
         "frequency": {"default": 800, "min": 20, "max": 22050, "step": 1},
-        "Q": {"default": 1, "min": 0.001, "max": 100},
+        "Q": {"default": 1, "min": 0.001, "max": 85},
         "gain": {"default": 0, "min": -40, "max": 40},
         "filterType": {"default": "lowpass", "options": "lowpass, highpass, bandpass, lowshelf, highshelf, peaking, notch, allpass"},
         "bypass": {"default": false}
@@ -62,7 +62,7 @@
     },
     "Tremolo": {
         "intensity": {"default": 0.3, "min": 0, "max": 1},
-        "rate": {"default": 5, "min": 0.001, "max": 8},
+        "rate": {"default": 5, "min": 0.001, "max": 15},
         "stereoPhase": {"default": 0, "min": 0, "max": 180},
         "bypass": {"default": false}
     },
@@ -72,7 +72,7 @@
         "excursionOctaves": {"default": 3.3, "min": 1, "max": 6},
         "sweep": {"default": 0.35, "min": 0, "max": 1},
         "resonance": {"default": 19, "min": 1, "max": 100},
-        "sensitivity": {"default": -0.5, "min": -1, "max": 1},
+        "sensitivity": {"default": -0.5, "min": -1, "max": 0.78},
         "bypass": {"default": false}
     },
     "Bitcrusher": {
@@ -90,8 +90,8 @@
     "PingPongDelay": {
         "wetLevel": {"default": 0.5, "min": 0, "max": 1},
         "feedback": {"default": 0.3, "min": 0, "max": 1},
-        "delayTimeLeft": {"default": 200, "min": 1, "max": 10000, "step": 1},
-        "delayTimeRight": {"default": 400, "min": 1, "max": 1000, "step": 1},
+        "delayTimeLeft": {"default": 200, "min": 1, "max": 1500, "step": 1},
+        "delayTimeRight": {"default": 400, "min": 1, "max": 1500, "step": 1},
         "bypass": {"default": false}
     },
     "Panner": {
