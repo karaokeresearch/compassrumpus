@@ -134,8 +134,10 @@
     <input type="range" min="0" max="100" value="15" class="slider" id="stingVolume">
 </div>
 <br><br>
-<div><select id="magneticAlignment_autoplayms" class="magneticAlignment"><option value=""></option><option value="N">N</option><option value="S">S</option><option value="E">E</option><option value="W">W</option></select>
-    &nbsp;
+<div>
+    <!-- let's comment out this magnetic alignment dropdown. The real solution is to make it so that the auto-stingers play using setTimeout rather than setInterval. It's going to be a much more complex system. Giving up for now
+    <select id="magneticAlignment_autoplayms" class="magneticAlignment"><option value=""></option><option value="N">N</option><option value="S">S</option><option value="E">E</option><option value="W">W</option></select>
+    -->
     Auto-sting &nbsp;&nbsp;
     <input type="checkbox" id="autoplay" name="autoplay" value="autoplay">  &nbsp;&nbsp;
     <input class="slider" type ="range" min="20" max="1500" value="300" id="autoplayms">
