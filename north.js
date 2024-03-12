@@ -104,27 +104,6 @@ function initAudio(){
   // Create lineOut
   lineOut = new WebAudiox.LineOut(context)
 
-  //fx bus
-    
-  overdrive = new tuna.Overdrive({
-    outputGain: -1,         //0 to 1+
-    drive: 1,              //0 to 1
-    curveAmount: 0.1,          //0 to 1
-    algorithmIndex: 2,       //0 to 5, selects one of our drive algorithms
-    bypass: 0
-  });
-  overdrive.connect(lineOut.destination);
-
-
-  delay = new tuna.Delay({
-    feedback: 0.4,    //0 to 1+
-    delayTime: 300,    //1 to 10000 milliseconds
-    wetLevel: 1,     //0 to 1+
-    dryLevel: 1,       //0 to 1+
-    cutoff: 20000,      //cutoff frequency of the built in lowpass-filter. 20 to 22050
-    bypass: false
-  });
-  delay.connect(overdrive);
 
   //create a pre-fx bus. Everything runs into this before hitting the FX in order to have a bus but also:
   //ceate a panner node called preFXbus, panner because it will force the mono inputs to stereo
@@ -779,14 +758,13 @@ elements.forEach(function(element) {
       fxNode[idNumber] = new tuna[selectedEffect](defaultParams);
 
       //connect the effect node to lineOut --actually let's do this basic overdrive so we always have some buffer
-      fxNode[idNumber].connect(overdrive);
 
       let lastNum = null;
 
       for (let i = fxNode.length - 1; i >= 0; i--) {
         console.log("lastNum: " , lastNum, i)
         if (fxNode[i] !== undefined) {//there's an fxNode here
-          console.log("fxNode[i] is defined");
+          console.log("fxNode[" +i+"]: " , fxNode[i])
           //first, disconnect it
           fxNode[i].disconnect();
 
