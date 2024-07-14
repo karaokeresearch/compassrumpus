@@ -95,6 +95,7 @@ let isRecording = false;
 let mediaStreamDestination;
 
 
+
 //remember that you have to work backwards with audio nodes. We create them in reverse below.
 //stinger -> shared stinger gain stage -> pre fx bus gain stage -> lineOut
 //when the effect is applied:
@@ -106,13 +107,13 @@ function initAudio(){
   context = new AudioContext();
   tuna = new Tuna(context);
   // Create lineOut
-  lineOut = new WebAudiox.LineOut(context)
+  //lineOut = new WebAudiox.LineOut(context)
   mediaStreamDestination = context.createMediaStreamDestination();
 
   //create a post-fx bus. Everything runs into this after hitting the FX so that we have a standarzied place to capture audio in case we want to record it
 
   postFXbus = context.createGain();
-  postFXbus.connect(lineOut.destination);
+  postFXbus.connect(context.destination);
 
 
   //create a pre-fx bus. Everything runs into this before hitting the FX in order to have a bus but also:
@@ -122,6 +123,12 @@ function initAudio(){
   //until we add effects, these are just directly connected
   preFXbus.connect(postFXbus);
   
+
+ // Create an AnalyserNode
+ analyser = context.createAnalyser();
+ analyser.fftSize = 2048;
+ postFXbus.connect(analyser);
+
   //
   
   
@@ -135,11 +142,36 @@ function initAudio(){
   
   loadChord(chordFileSelect.value,chordVoicesToLoad);
 
-    
+  monitorAudioLevel();
 
 }
 
 
+
+function monitorAudioLevel() {
+  const bufferLength = analyser.fftSize;
+  const dataArray = new Uint8Array(bufferLength);
+  const levelDiv = document.getElementById('level');
+
+  function getRMSValue(array) {
+    let sum = 0.0;
+    for (let i = 0; i < array.length; i++) {
+      const normalizedValue = (array[i] - 128) / 128;
+      sum += normalizedValue * normalizedValue;
+    }
+    return Math.sqrt(sum / array.length);
+  }
+
+  function updateAudioLevel() {
+    analyser.getByteTimeDomainData(dataArray);
+    const rms = getRMSValue(dataArray);
+    levelDiv.innerHTML = 'Current audio level: ' + rms.toFixed(2);
+
+    requestAnimationFrame(updateAudioLevel);
+  }
+
+  updateAudioLevel();
+}
 
 
 
@@ -938,7 +970,9 @@ function encodeToWav(audioBuffer) {
   for (let i = 0; i < audioBuffer.length; i++) {
     for (let channel = 0; channel < numOfChannels; channel++) {
       const sample = audioBuffer.getChannelData(channel)[i];
-      view.setInt16(offset, sample * 0x7FFF, true);
+      // Scale the sample from [-1.0, 1.0] to [-32768, 32767]
+      const scaledSample = Math.max(-1, Math.min(1, sample)) * 32767;
+      view.setInt16(offset, scaledSample, true);
       offset += 2;
     }
   }
