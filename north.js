@@ -1,6 +1,6 @@
 
 let declination = 0;
-
+let bearingRecording=[];
 
 
 let stinger={};
@@ -165,7 +165,22 @@ function monitorAudioLevel() {
   function updateAudioLevel() {
     analyser.getByteTimeDomainData(dataArray);
     const rms = getRMSValue(dataArray);
-    levelDiv.innerHTML = 'Current audio level: ' + rms.toFixed(2);
+    //generate a quick and dirty volume meter using pipe symbols. 40 pipes wide is the max
+    let levelString = "&#10074";
+    for (let i = 0; i < 40; i++) {
+      if (i < rms * 40) {
+        levelString += "|";
+      } else {
+        levelString += "&nbsp;";
+      }
+    }
+    levelDiv.innerHTML = levelString + "&#10074";
+    //if rms < .8 change to red, otherwise green
+    if (rms < .8) {
+      levelDiv.style.color = "DarkGreen";
+    } else {
+      levelDiv.style.color = "Red";
+    }
 
     requestAnimationFrame(updateAudioLevel);
   }
@@ -458,6 +473,14 @@ function directionChanged(){
     }
 });
 
+
+  //if we're recording, add the bearing to the recording. Format should be: ms since recording started, bearing
+  if (isRecording) {
+    bearingRecording.push([Date.now() - recordStartTimeStamp, modulus]);
+    //print the record just pushed to console
+//    console.log(bearingRecording[bearingRecording.length-1]);
+  }
+
 }
 
 
@@ -477,6 +500,7 @@ function handleOrientation(event) {
     if (started==true){
       directionChanged();
     }
+    
   }
 
 let globalBearing=0;
@@ -891,6 +915,7 @@ fxElements.forEach(function(element) {
 
 console.log("whee");
 
+let recordStartTimeStamp;
 
 function recordAudio() {
   if (!isRecording) {
@@ -907,6 +932,9 @@ function recordAudio() {
 
     mediaRecorder.start();
     isRecording = true;
+    bearingRecording=[];
+    recordStartTimeStamp = Date.now();
+
   }
 }
 
@@ -919,17 +947,6 @@ function stopRecordingAudio() {
   }
 }
 
-function saveRecordedAudio() {
-  const blob = new Blob(recordedChunks, { type: 'audio/webm' });
-  const arrayBufferPromise = blob.arrayBuffer();
-  
-  arrayBufferPromise.then(arrayBuffer => {
-    context.decodeAudioData(arrayBuffer, audioBuffer => {
-      const wavData = encodeToWav(audioBuffer);
-      download(wavData, 'recording.wav');
-    });
-  });
-}
 
 function encodeToWav(audioBuffer) {
   const numOfChannels = audioBuffer.numberOfChannels;
@@ -986,13 +1003,36 @@ function writeString(view, offset, string) {
   }
 }
 
-function download(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.style.display = 'none';
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  URL.revokeObjectURL(url);
+function saveRecordedAudio() {
+  const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+  const arrayBufferPromise = blob.arrayBuffer();
+//let's base the filename on the current date and time so that if it's in a folder with other recordings, they'll be sorted by date
+  let filenamePrefix = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-');
+
+  arrayBufferPromise.then(arrayBuffer => {
+    context.decodeAudioData(arrayBuffer, audioBuffer => {
+      const wavData = encodeToWav(audioBuffer);
+      download(wavData, "noise.bike_" + filenamePrefix +  '.wav').then(() => {
+        // After the first download is complete, initiate the second download
+        let csv = 'ms,bearing\n';
+        bearingRecording.forEach(record => {
+          csv += record.join(',') + '\n';
+        });
+        return download(new Blob([csv], { type: 'text/csv' }), "noise.bike_" + filenamePrefix + '.csv');
+      });
+    });
+  });
+}
+
+function download(content, fileName, mimeType) {
+  return new Promise((resolve) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', fileName);
+    a.click();
+    URL.revokeObjectURL(url);
+    resolve();
+  });
 }
