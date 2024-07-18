@@ -1036,3 +1036,105 @@ function download(content, fileName, mimeType) {
     resolve();
   });
 }
+
+// helper functions for saving presets
+
+// Function to get the value of a checkbox
+function getCheckboxValue(id) {
+  const checkbox = document.getElementById(id);
+  return checkbox ? checkbox.checked : null;
+}
+
+// Function to get the value of a slider and convert it to an integer
+function getSliderValue(id) {
+  const slider = document.getElementById(id);
+  return slider ? parseInt(slider.value, 10) : null;
+}
+
+// Function to get the value of a dropdown
+function getDropdownValue(id) {
+  const dropdown = document.getElementById(id);
+  return dropdown ? dropdown.value : null;
+}
+
+// Function to get values of effect rack parameters, including magnetic alignment
+function getEffectRackValues(fxId) {
+  const inputs = document.querySelectorAll(`input[id^="${fxId}"]`);
+  const selects = document.querySelectorAll(`select[id^="magneticAlignment${fxId.slice(2)}"]`);
+  const fxParams = {};
+
+  // Gather input values
+  inputs.forEach(input => {
+    if (input.type === 'checkbox') {
+      fxParams[input.id] = input.checked;
+    } else if (input.type === 'range') {
+      fxParams[input.id] = parseInt(input.value, 10);
+    } else {
+      fxParams[input.id] = input.value;
+    }
+  });
+
+  // Gather select values
+  selects.forEach(select => {
+    fxParams[select.id] = select.value;
+  });
+
+  return fxParams;
+}
+
+// Function to extract settings
+function extractSettings() {
+  const settings = {
+    version: "1.0",
+    mainSettings: {
+      chordVoice0: getCheckboxValue('chordVoice0'),
+      chordVoice1: getCheckboxValue('chordVoice1'),
+      chordVoice2: getCheckboxValue('chordVoice2'),
+      chordVolume: getSliderValue('chordVolume'),
+      stingVolume: getSliderValue('stingVolume'),
+      autoplay: getCheckboxValue('autoplay'),
+      autoplayms: getSliderValue('autoplayms'),
+      chordFileSelect: getDropdownValue('chordFileSelect'),
+      stingerFileSelect: getDropdownValue('stingerFileSelect'),
+    },
+    effectsRack: {}
+  };
+
+  // Check and gather values for each effect rack if enabled
+  for (let i = 0; i < 5; i++) {
+    const fxId = `fx${i}`;
+    const effectSelect = getDropdownValue(`effectSelect${i}`);
+    if (effectSelect && effectSelect !== "None") {
+      settings.effectsRack[fxId] = {
+        effect: effectSelect,
+        params: getEffectRackValues(fxId)
+      };
+    }
+  }
+
+  return settings;
+}
+
+// Call the function to get the settings object
+
+// Function to download settings as a JSON file
+function downloadSettingsAsJSON() {
+  const settings = extractSettings();
+  const settingsJSON = JSON.stringify(settings, null, 2); // Pretty-print JSON
+
+  // Get the current date and time in the desired format
+  const now = new Date();
+  const filename = 'noise.bike_' + now.toISOString().replace(/:/g, '-').replace(/\..+/, '') + 'Z.json';
+
+  // Create a blob and trigger the download
+  const blob = new Blob([settingsJSON], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Call the function to download settings as a JSON file
+downloadSettingsAsJSON();
