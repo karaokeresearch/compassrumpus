@@ -1137,4 +1137,43 @@ function downloadSettingsAsJSON() {
 }
 
 // Call the function to download settings as a JSON file
-downloadSettingsAsJSON();
+
+// Trigger the download settings function when the save profile button is clicked
+document.getElementById('saveProfileButton').addEventListener('click', function() {
+  downloadSettingsAsJSON();
+});
+
+
+//file loading
+
+// Function to handle the loading of a JSON profile
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+
+  // Ensure the file is a JSON file
+  if (file && file.type === "application/json") {
+    const reader = new FileReader();
+
+    // Function to execute once the file is read
+    reader.onload = function(e) {
+      try {
+        // Parse the JSON content and store it in the settings variable
+        const settings = JSON.parse(e.target.result);
+        console.log('Loaded settings:', settings);
+        // The settings variable now contains the loaded JSON object
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+    };
+
+    // Read the file as text
+    reader.readAsText(file);
+  } else {
+    console.error('Please select a valid JSON file.');
+  }
+});
+
+// Trigger the file input when the load profile button is clicked
+document.getElementById('loadProfileButton').addEventListener('click', function() {
+  document.getElementById('fileInput').click();
+});
