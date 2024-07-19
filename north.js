@@ -623,6 +623,7 @@ var chordVoicesToLoad = [0,2]
 var chordFileSelect = document.getElementById("chordFileSelect");
 // Add an event listener to listen for changes
 chordFileSelect.addEventListener("change", function() {
+  console.log("chordVoicesToLoad triggered: " , chordFileSelect.value,chordVoicesToLoad);
     loadChord(chordFileSelect.value,chordVoicesToLoad);
 });
 
@@ -1145,7 +1146,7 @@ document.getElementById('saveProfileButton').addEventListener('click', function(
 
 
 //file loading
-
+let settings;
 // Function to handle the loading of a JSON profile
 document.getElementById('fileInput').addEventListener('change', function(event) {
   const file = event.target.files[0];
@@ -1158,7 +1159,7 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     reader.onload = function(e) {
       try {
         // Parse the JSON content and store it in the settings variable
-        const settings = JSON.parse(e.target.result);
+        settings = JSON.parse(e.target.result);
         console.log('Loaded settings:', settings);
         // The settings variable now contains the loaded JSON object
       } catch (error) {
@@ -1176,4 +1177,124 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
 // Trigger the file input when the load profile button is clicked
 document.getElementById('loadProfileButton').addEventListener('click', function() {
   document.getElementById('fileInput').click();
+});
+
+
+
+
+
+
+
+//experiment
+
+
+
+function triggerEvent(element, eventType) {
+  console.log(`Triggering event ${eventType} on`, element);
+  const event = new Event(eventType, { bubbles: true });
+  element.dispatchEvent(event);
+}
+
+// Function to apply settings from the settings object
+function applySettings(settings) {
+  // Set main settings
+  const chordVoice0 = document.getElementById('chordVoice0');
+  chordVoice0.checked = settings.mainSettings.chordVoice0;
+  triggerEvent(chordVoice0, 'change');
+
+  const chordVoice1 = document.getElementById('chordVoice1');
+  chordVoice1.checked = settings.mainSettings.chordVoice1;
+  triggerEvent(chordVoice1, 'change');
+
+  const chordVoice2 = document.getElementById('chordVoice2');
+  chordVoice2.checked = settings.mainSettings.chordVoice2;
+  triggerEvent(chordVoice2, 'change');
+
+  const chordVolume = document.getElementById('chordVolume');
+  chordVolume.value = settings.mainSettings.chordVolume;
+  triggerEvent(chordVolume, 'input');
+
+  const stingVolume = document.getElementById('stingVolume');
+  stingVolume.value = settings.mainSettings.stingVolume;
+  triggerEvent(stingVolume, 'input');
+
+  const autoplay = document.getElementById('autoplay');
+  autoplay.checked = settings.mainSettings.autoplay;
+  triggerEvent(autoplay, 'change');
+
+  const autoplayms = document.getElementById('autoplayms');
+  autoplayms.value = settings.mainSettings.autoplayms;
+  triggerEvent(autoplayms, 'input');
+
+  const chordFileSelect = document.getElementById('chordFileSelect');
+  chordFileSelect.value = settings.mainSettings.chordFileSelect;
+  triggerEvent(chordFileSelect, 'change');
+
+  const stingerFileSelect = document.getElementById('stingerFileSelect');
+  stingerFileSelect.value = settings.mainSettings.stingerFileSelect;
+  triggerEvent(stingerFileSelect, 'change');
+
+  // Set effects racks
+  for (let i = 0; i < 5; i++) {
+    const fxId = `fx${i}`;
+    const effectSelectId = `effectSelect${i}`;
+    const effectParamsId = `effectParams${i}`;
+
+    // If the effect is not present in settings, set to "None"
+    if (!settings.effectsRacks[fxId]) {
+      const effectSelect = document.getElementById(effectSelectId);
+      effectSelect.value = "";
+      triggerEvent(effectSelect, 'change');
+      document.getElementById(effectParamsId).innerHTML = ""; // Clear any existing parameters
+      continue;
+    }
+
+    // Set the effect
+    const effect = settings.effectsRacks[fxId];
+    const effectSelect = document.getElementById(effectSelectId);
+    effectSelect.value = effect.effect;
+    triggerEvent(effectSelect, 'change');
+
+    // Apply the effect parameters after a short delay to ensure the effect is selected
+    setTimeout(() => {
+      const params = effect.params;
+      for (const param in params) {
+        const element = document.getElementById(param);
+        if (element) {
+          if (element.type === 'checkbox') {
+            element.checked = params[param];
+            triggerEvent(element, 'change');
+          } else {
+            element.value = params[param];
+            triggerEvent(element, 'input');
+          }
+        }
+      }
+    }, 100); // Delay to allow the effect selection to propagate
+  }
+}
+
+// Example function to load the settings (simulating file load)
+function loadProfileFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const settings = JSON.parse(event.target.result);
+    applySettings(settings);
+  };
+  reader.readAsText(file);
+}
+
+// Trigger the file input when the load profile button is clicked
+document.getElementById('loadProfileButton').addEventListener('click', function() {
+  document.getElementById('fileInput').click();
+});
+
+// Handle the file input change event to load the profile
+document.getElementById('fileInput').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file && file.type === "application/json") {
+    loadProfileFromFile(file);
+  } else {
+    console.error('Please select a valid JSON file.');
+  }
 });
