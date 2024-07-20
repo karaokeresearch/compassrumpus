@@ -65,23 +65,6 @@ for (i = 0; i < 3; i++) {
 }
 
 
-function loadStinger(stingerSet){
-  WebAudiox.loadBuffer(context, stingerSets[stingerSet]["north"], function(buffer){
-    stinger["north"]["bufferData"] = buffer;
-  });
-
-  WebAudiox.loadBuffer(context, stingerSets[stingerSet]["east"], function(buffer){
-    stinger["east"]["bufferData"] = buffer;
-  });
-
-  WebAudiox.loadBuffer(context, stingerSets[stingerSet]["south"], function(buffer){
-    stinger["south"]["bufferData"] = buffer;
-  });
-
-  WebAudiox.loadBuffer(context, stingerSets[stingerSet]["west"], function(buffer){
-    stinger["west"]["bufferData"] = buffer;
-  });
-}
 
 let context;
 let tuna;
@@ -214,7 +197,7 @@ started=false;
 
 const terriblecompass = document.getElementById("terriblecompass");
 
-let sound=[];   
+   
 let noteOffsets=[]; 
 for (i = 0; i < 13; i++) {
   noteOffsets.push(((2**(1/12))**i)); //this has to do with equal temprament
@@ -227,6 +210,28 @@ var chordRates=[];
   * @param {array} whichNotes - an array of numbers that correspond to the notes in the chord. 0 is the root, 1 is the third, 2 is the fifth, etc.
   * @return {array} chordRates - an array of numbers that correspond to the playback rates of the notes in the chord. 1 is the root, 2 is the third, 4 is the fifth, etc.
  */
+let baseChordRates=[];
+let sound=[];
+
+
+function customLoadBuffer(context, url, callback) {
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok: ' + response.statusText);
+      }
+      return response.arrayBuffer();
+    })
+    .then(arrayBuffer => context.decodeAudioData(arrayBuffer))
+    .then(buffer => {
+      if (!buffer) {
+        throw new Error('Error decoding file data: ' + url);
+      }
+      callback(buffer);
+    })
+    .catch(error => console.error('Error loading buffer:', error));
+}
+
 
 function loadChord(chordFile,whichNotes){
   //first let's define the base chord. Below is a major chord
@@ -260,24 +265,31 @@ function loadChord(chordFile,whichNotes){
   if (files[chordFile].centAdjustment) {
     chordPitchShiftFactor = 2 ** (files[chordFile].centAdjustment / 1200); // 1200 cents in an octave
   } 
-  console.log(chordFile);
-  WebAudiox.loadBuffer(context, chordFile, function(buffer){
+  console.log("setting buffer to " + chordFile);
+  customLoadBuffer(context, chordFile, function(buffer){
+    console.log("running loadBuffer on "+ chordFile);
     //stop and disconnect any sounds if present
-    for (i = 0; i < sound.length; i++) {
-      if (sound[i] && sound[i]["bufferSource"]) {//if there's already an instrument playing, stop and disconnect it before we overwrite.
-        sound[i]["bufferSource"].stop();
-        sound[i]["bufferSource"].disconnect();
+      for (i = 0; i < sound.length; i++) {
+          sound[i]["bufferSource"].stop();
+          sound[i]["bufferSource"].disconnect();
+          console.log("unloading sound " + i);
       }
-    }
-    sound=[];
+
     for (i=0; i<chordRates.length; i++){
-      sound[i] ={};
+      //if sound[i] doesn't exist, create it
+      if (!sound[i]) { 
+        sound[i] ={};
+        sound[i]["gain"] = context.createGain();
+        sound[i]["gain"].connect(preFXbus);
+        sound[i]["gain"].gain.value = chordVolume;
+      }
+
       sound[i]["bufferSource"] = context.createBufferSource();
-      sound[i]["gain"] = context.createGain();
+      
       sound[i]["bufferSource"].connect(sound[i]["gain"]);
-      sound[i]["gain"].connect(preFXbus);
+      
       sound[i]["bufferSource"].loop = true;
-      sound[i]["gain"].gain.value = chordVolume;
+      
       sound[i]["bufferSource"].playbackRate.value = chordRates[i] * chordPitchShiftFactor;
       // init AudioBufferSourceNode
       sound[i]["bufferSource"].buffer = buffer;
@@ -288,6 +300,26 @@ function loadChord(chordFile,whichNotes){
     directionChanged();
   });
 }
+
+
+function loadStinger(stingerSet){
+  customLoadBuffer(context, stingerSets[stingerSet]["north"], function(buffer){
+    stinger["north"]["bufferData"] = buffer;
+  });
+
+  customLoadBuffer(context, stingerSets[stingerSet]["east"], function(buffer){
+    stinger["east"]["bufferData"] = buffer;
+  });
+
+  customLoadBuffer(context, stingerSets[stingerSet]["south"], function(buffer){
+    stinger["south"]["bufferData"] = buffer;
+  });
+
+  customLoadBuffer(context, stingerSets[stingerSet]["west"], function(buffer){
+    stinger["west"]["bufferData"] = buffer;
+  });
+}
+
 
 
 function playStinger(chordPos){
@@ -1174,11 +1206,6 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
   }
 });
 
-// Trigger the file input when the load profile button is clicked
-document.getElementById('loadProfileButton').addEventListener('click', function() {
-  document.getElementById('fileInput').click();
-});
-
 
 
 
@@ -1195,84 +1222,7 @@ function triggerEvent(element, eventType) {
   element.dispatchEvent(event);
 }
 
-// Function to apply settings from the settings object
-function applySettings(settings) {
-  // Set main settings
-  const chordVoice0 = document.getElementById('chordVoice0');
-  chordVoice0.checked = settings.mainSettings.chordVoice0;
-  triggerEvent(chordVoice0, 'change');
 
-  const chordVoice1 = document.getElementById('chordVoice1');
-  chordVoice1.checked = settings.mainSettings.chordVoice1;
-  triggerEvent(chordVoice1, 'change');
-
-  const chordVoice2 = document.getElementById('chordVoice2');
-  chordVoice2.checked = settings.mainSettings.chordVoice2;
-  triggerEvent(chordVoice2, 'change');
-
-  const chordVolume = document.getElementById('chordVolume');
-  chordVolume.value = settings.mainSettings.chordVolume;
-  triggerEvent(chordVolume, 'input');
-
-  const stingVolume = document.getElementById('stingVolume');
-  stingVolume.value = settings.mainSettings.stingVolume;
-  triggerEvent(stingVolume, 'input');
-
-  const autoplay = document.getElementById('autoplay');
-  autoplay.checked = settings.mainSettings.autoplay;
-  triggerEvent(autoplay, 'change');
-
-  const autoplayms = document.getElementById('autoplayms');
-  autoplayms.value = settings.mainSettings.autoplayms;
-  triggerEvent(autoplayms, 'input');
-
-  const chordFileSelect = document.getElementById('chordFileSelect');
-  chordFileSelect.value = settings.mainSettings.chordFileSelect;
-  triggerEvent(chordFileSelect, 'change');
-
-  const stingerFileSelect = document.getElementById('stingerFileSelect');
-  stingerFileSelect.value = settings.mainSettings.stingerFileSelect;
-  triggerEvent(stingerFileSelect, 'change');
-
-  // Set effects racks
-  for (let i = 0; i < 5; i++) {
-    const fxId = `fx${i}`;
-    const effectSelectId = `effectSelect${i}`;
-    const effectParamsId = `effectParams${i}`;
-
-    // If the effect is not present in settings, set to "None"
-    if (!settings.effectsRacks[fxId]) {
-      const effectSelect = document.getElementById(effectSelectId);
-      effectSelect.value = "";
-      triggerEvent(effectSelect, 'change');
-      document.getElementById(effectParamsId).innerHTML = ""; // Clear any existing parameters
-      continue;
-    }
-
-    // Set the effect
-    const effect = settings.effectsRacks[fxId];
-    const effectSelect = document.getElementById(effectSelectId);
-    effectSelect.value = effect.effect;
-    triggerEvent(effectSelect, 'change');
-
-    // Apply the effect parameters after a short delay to ensure the effect is selected
-    setTimeout(() => {
-      const params = effect.params;
-      for (const param in params) {
-        const element = document.getElementById(param);
-        if (element) {
-          if (element.type === 'checkbox') {
-            element.checked = params[param];
-            triggerEvent(element, 'change');
-          } else {
-            element.value = params[param];
-            triggerEvent(element, 'input');
-          }
-        }
-      }
-    }, 100); // Delay to allow the effect selection to propagate
-  }
-}
 
 // Example function to load the settings (simulating file load)
 function loadProfileFromFile(file) {
@@ -1298,3 +1248,112 @@ document.getElementById('fileInput').addEventListener('change', function(event) 
     console.error('Please select a valid JSON file.');
   }
 });
+
+// Helper function to set a setting with delay
+function setSettingWithDelay(settingFunction, delay) {
+  setTimeout(settingFunction, delay);
+}
+
+// Function to simulate user input
+function triggerEvent(element, eventType) {
+  const event = new Event(eventType, { bubbles: true });
+  element.dispatchEvent(event);
+}
+
+
+
+// I'm not proud of this, but the code requires too much refactoring to do the proper way at this time.
+function applySettings(settings) {
+
+  // Helper function to set a setting with delay
+  function setSettingWithDelay(settingFunction, delay) {
+    setTimeout(settingFunction, delay);
+  }
+
+  function triggerEvent(element, eventType) {
+    const event = new Event(eventType, { bubbles: true });
+    element.dispatchEvent(event);
+  }
+
+  let delay = 0;
+
+  // Set main settings with staggered delays
+  setSettingWithDelay(() => {
+    const chordVoice0 = document.getElementById('chordVoice0');
+    chordVoice0.checked = settings.mainSettings.chordVoice0;
+    triggerEvent(chordVoice0, 'change');
+  }, delay);
+  delay += 250;
+
+  setSettingWithDelay(() => {
+    const chordVoice1 = document.getElementById('chordVoice1');
+    chordVoice1.checked = settings.mainSettings.chordVoice1;
+    triggerEvent(chordVoice1, 'change');
+  }, delay);
+  delay += 250;
+
+  setSettingWithDelay(() => {
+    const chordVoice2 = document.getElementById('chordVoice2');
+    chordVoice2.checked = settings.mainSettings.chordVoice2;
+    triggerEvent(chordVoice2, 'change');
+  }, delay);
+  delay += 250;
+
+  setSettingWithDelay(() => {
+    const chordVolume = document.getElementById('chordVolume');
+    chordVolume.value = settings.mainSettings.chordVolume;
+    triggerEvent(chordVolume, 'input');
+  }, delay);
+  delay += 250;
+
+  setSettingWithDelay(() => {
+    const stingVolume = document.getElementById('stingVolume');
+    stingVolume.value = settings.mainSettings.stingVolume;
+    triggerEvent(stingVolume, 'input');
+  }, delay);
+  delay += 250;
+
+  setSettingWithDelay(() => {
+    const autoplay = document.getElementById('autoplay');
+    autoplay.checked = settings.mainSettings.autoplay;
+    triggerEvent(autoplay, 'change');
+  }, delay);
+  delay += 250;
+
+  setSettingWithDelay(() => {
+    const autoplayms = document.getElementById('autoplayms');
+    autoplayms.value = settings.mainSettings.autoplayms;
+    triggerEvent(autoplayms, 'input');
+  }, delay);
+  delay += 250;
+
+  setSettingWithDelay(() => {
+    const chordFileSelect = document.getElementById('chordFileSelect');
+    chordFileSelect.value = settings.mainSettings.chordFileSelect;
+    triggerEvent(chordFileSelect, 'change');
+  }, delay);
+  delay += 250;
+
+  setSettingWithDelay(() => {
+    const stingerFileSelect = document.getElementById('stingerFileSelect');
+    stingerFileSelect.value = settings.mainSettings.stingerFileSelect;
+    triggerEvent(stingerFileSelect, 'change');
+  }, delay);
+  delay += 250;
+
+  // Set effects rack selectors with staggered delays
+  const fxKeys = ['fx0', 'fx1', 'fx2', 'fx3', 'fx4'];
+  fxKeys.forEach((fxKey) => {
+    setSettingWithDelay(() => {
+      const effectIndex = fxKey.slice(2); // Extract the numeric part (e.g., 'fx0' -> '0')
+      const effectSelect = document.getElementById(`effectSelect${effectIndex}`);
+      if (settings.effectsRack[fxKey]) {
+        effectSelect.value = settings.effectsRack[fxKey].effect;
+      } else {
+        effectSelect.value = "None";
+      }
+      triggerEvent(effectSelect, 'change');
+    }, delay);
+    delay += 250;
+  });
+}
