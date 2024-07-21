@@ -839,7 +839,6 @@ elements.forEach(function(element) {
 
       console.log("idNumber: " , idNumber)
       //draw the form
-      createEffectForm(selectedEffect, tunaParams[selectedEffect], idNumber);
 
       //let's load an effect
       //console.log("here:", selectedEffect, tunaParams[selectedEffect])
@@ -854,16 +853,24 @@ elements.forEach(function(element) {
       if (fxNode[idNumber]) {
         fxNode[idNumber].disconnect();
       }
-      //create the effect node. A new Tuna instance of type selectedEffect with params from tunaParams[selectedEffect]
-      fxNode[idNumber] = new tuna[selectedEffect](defaultParams);
+      if (selectedEffect != "None"){
+        //create the effect node. A new Tuna instance of type selectedEffect with params from tunaParams[selectedEffect]
+        fxNode[idNumber] = new tuna[selectedEffect](defaultParams);
+        createEffectForm(selectedEffect, tunaParams[selectedEffect], idNumber);
 
+      }else{
+        fxNode[idNumber] = undefined;
+        destroyEffectForm(idNumber);
+      }
       //connect the effect node to lineOut --actually let's do this basic overdrive so we always have some buffer
 
       let lastNum = null;
-
+      console.log(fxNode);
+      let anyDefined = false;
       for (let i = fxNode.length - 1; i >= 0; i--) {
         console.log("lastNum: " , lastNum, i)
         if (fxNode[i] !== undefined) {//there's an fxNode here
+          anyDefined = true;
           console.log("fxNode[" +i+"]: " , fxNode[i])
           //first, disconnect it
           fxNode[i].disconnect();
@@ -882,10 +889,19 @@ elements.forEach(function(element) {
       //disconnect the preFXbus from whatever it's attached to
       preFXbus.disconnect();
       //connect the preFXbus to the first fxNode
-      preFXbus.connect(fxNode[lastNum]);
+      if (anyDefined) {
+        preFXbus.connect(fxNode[lastNum]);
+      }else{
+        preFXbus.connect(postFXbus);
+      }
 
     });
 });
+
+function destroyEffectForm(formID) {
+  const container = document.getElementById('effectParams' + formID);
+  container.innerHTML = '';
+}
 
 
 // Select all elements with class 'fx'
