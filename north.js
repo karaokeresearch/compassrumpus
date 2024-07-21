@@ -121,7 +121,7 @@ function initAudio(){
 
   console.log("playing");
   let clickHereID = document.getElementById("taphere");
-  clickHereID.innerHTML = "Playing.";
+  clickHereID.innerHTML = " 🔊";
   
   loadChord(chordFileSelect.value,chordVoicesToLoad);
 
@@ -439,7 +439,7 @@ function directionChanged(){
 
 
 
-  HTMLconsole.innerHTML = ", Heading: " + parseInt(modulus) + "°";
+  HTMLconsole.innerHTML = "&nbsp; Heading: " + parseInt(modulus) + "°";
   let finalDirection = compassDirectionToSpecificName(modulus);
   let letter=[];
   letter[0] = document.getElementById("letter0");
@@ -987,6 +987,7 @@ function recordAudio() {
     isRecording = true;
     bearingRecording=[];
     recordStartTimeStamp = Date.now();
+    playRaceStartTones("#C00000");
 
   }
 }
@@ -997,6 +998,7 @@ function stopRecordingAudio() {
     // Disconnect postFXbus from mediaStreamDestination when recording stops
     postFXbus.disconnect(mediaStreamDestination);
     isRecording = false;
+    playStopTones();
   }
 }
 
@@ -1059,23 +1061,27 @@ function writeString(view, offset, string) {
 function saveRecordedAudio() {
   const blob = new Blob(recordedChunks, { type: 'audio/webm' });
   const arrayBufferPromise = blob.arrayBuffer();
-//let's base the filename on the current date and time so that if it's in a folder with other recordings, they'll be sorted by date
   let filenamePrefix = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-');
 
   arrayBufferPromise.then(arrayBuffer => {
     context.decodeAudioData(arrayBuffer, audioBuffer => {
       const wavData = encodeToWav(audioBuffer);
-      download(wavData, "noise.bike_" + filenamePrefix +  '.wav').then(() => {
-        // After the first download is complete, initiate the second download
-        let csv = 'ms,bearing\n';
-        bearingRecording.forEach(record => {
-          csv += record.join(',') + '\n';
-        });
-        return download(new Blob([csv], { type: 'text/csv' }), "noise.bike_" + filenamePrefix + '.csv');
-      });
+      download(wavData, "noise.bike_" + filenamePrefix + '.wav');
     });
   });
 }
+
+
+function saveCSVData() {
+  let filenamePrefix = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-');
+  let csv = 'ms,bearing\n';
+  bearingRecording.forEach(record => {
+    csv += record.join(',') + '\n';
+  });
+  const csvBlob = new Blob([csv], { type: 'text/csv' });
+  download(csvBlob, "noise.bike_" + filenamePrefix + '.csv');
+}
+
 
 function download(content, fileName, mimeType) {
   return new Promise((resolve) => {
@@ -1454,6 +1460,7 @@ function parseCSV(content) {
 
 function playBearing(data) {
   orientationPlaybackHappening = true;
+  playRaceStartTones("#00AA00");
   const startTime = Date.now();
   let currentIndex = 0;
 
@@ -1478,44 +1485,74 @@ function playBearing(data) {
       } else {
           orientationPlaybackHappening = false;
           console.log('Playback finished.');
+          document.getElementById("frequencyDisplay").style.backgroundColor = "PaleVioletRed";
+          document.getElementById("frequencyDisplay").style.color = "white";
+          
+          playTone(330, 0);                         
+          playTone(220, toneSpacing *.25);                   
+        
       }
   }
+  setTimeout(function(){
+    console.log('Starting bearing updates...');
+    requestAnimationFrame(updateBearing);
+  }, 3 * toneSpacing * 1000);
 
-  console.log('Starting bearing updates...');
-  requestAnimationFrame(updateBearing);
 }
 
 
-function playRaceStartTones() {
-  const toneDuration = 2.5;  // duration of each tone in seconds
-  const toneSpacing = 1;     // time between tones in seconds
+const toneDuration = 2.5;  // duration of each tone in seconds
+const toneSpacing = 1;     // time between tones in seconds
 
-  // Function to create and play a tone
-  function playTone(frequency, startTime) {
-    const oscillator = context.createOscillator();
-    const gainNode = context.createGain();
 
-    oscillator.type = 'sine'; // Simple sine wave
-    oscillator.frequency.setValueAtTime(frequency, context.currentTime + startTime);
-    gainNode.gain.setValueAtTime(1, context.currentTime + startTime); // Max volume
-    gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + startTime + toneDuration);
+// Function to create and play a tone
+function playTone(frequency, startTime) {
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
 
-    oscillator.connect(gainNode);
-    gainNode.connect(postFXbus);
+  oscillator.type = 'sine'; // Simple sine wave
+  oscillator.frequency.setValueAtTime(frequency, context.currentTime + startTime);
+  gainNode.gain.setValueAtTime(1, context.currentTime + startTime); // Max volume
+  gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + startTime + toneDuration);
 
-    oscillator.start(context.currentTime + startTime);
-    oscillator.stop(context.currentTime + startTime + toneDuration);
+  oscillator.connect(gainNode);
+  gainNode.connect(postFXbus);
 
-    // Disconnect after the tone has finished playing
-    oscillator.onended = () => {
-      gainNode.disconnect(postFXbus);
-      oscillator.disconnect(gainNode);
-    };
-  }
+  oscillator.start(context.currentTime + startTime);
+  oscillator.stop(context.currentTime + startTime + toneDuration);
 
+  // Disconnect after the tone has finished playing
+  oscillator.onended = () => {
+    gainNode.disconnect(postFXbus);
+    oscillator.disconnect(gainNode);
+  };
+}
+
+
+function playRaceStartTones(playColor) {
+
+  document.getElementById("frequencyDisplay").style.backgroundColor = "gold";
+
+  document.getElementById("frequencyDisplay").style.color = "black";
+  
   // Play three lower tones and then one an octave higher
   playTone(440, 0);                              // A4
   playTone(440, toneSpacing);                    // A4
   playTone(440, 2 * toneSpacing);                // A4
   playTone(880, 3 * toneSpacing);                // A5 (an octave higher)
+
+  //when that last tone plays, change #frequencyDisplay's background to 00FF00
+  setTimeout(function(){document.getElementById("frequencyDisplay").style.backgroundColor = playColor;}, 3 * toneSpacing * 1000);
+  setTimeout(function(){document.getElementById("frequencyDisplay").style.color = "white";}, 3 * toneSpacing * 1000);
+}
+
+function playStopTones() {
+
+  // Play three higher tones and then one an octave lower
+  playTone(660, 0);                           
+  playTone(440, toneSpacing *.25);                  
+
+
+  //when that last tone plays, change #frequencyDisplay's background to FF0000
+  setTimeout(function(){document.getElementById("frequencyDisplay").style.backgroundColor = "PaleVioletRed";}, .25 * toneSpacing * 1000);
 }
