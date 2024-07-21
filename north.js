@@ -1320,28 +1320,28 @@ function applySettings(settings) {
     chordVolume.value = settings.mainSettings.chordVolume;
     triggerEvent(chordVolume, 'input');
   }, delay);
-  delay += 250;
+  delay += 1;
 
   setSettingWithDelay(() => {
     const stingVolume = document.getElementById('stingVolume');
     stingVolume.value = settings.mainSettings.stingVolume;
     triggerEvent(stingVolume, 'input');
   }, delay);
-  delay += 250;
+  delay += 1;
 
   setSettingWithDelay(() => {
     const autoplay = document.getElementById('autoplay');
     autoplay.checked = settings.mainSettings.autoplay;
     triggerEvent(autoplay, 'change');
   }, delay);
-  delay += 250;
+  delay += 1;
 
   setSettingWithDelay(() => {
     const autoplayms = document.getElementById('autoplayms');
     autoplayms.value = settings.mainSettings.autoplayms;
     triggerEvent(autoplayms, 'input');
   }, delay);
-  delay += 250;
+  delay += 1;
 
   setSettingWithDelay(() => {
     const chordFileSelect = document.getElementById('chordFileSelect');
@@ -1372,4 +1372,25 @@ function applySettings(settings) {
     }, delay);
     delay += 250;
   });
+
+  Object.keys(settings.effectsRack).forEach((fxKey) => {
+    const effectIndex = fxKey.slice(2); // Extract the numeric part (e.g., 'fx0' -> '0')
+    const params = settings.effectsRack[fxKey].params;
+    Object.keys(params).forEach((paramKey) => {
+      setSettingWithDelay(() => {
+        const paramElement = document.getElementById(paramKey);
+        const paramValue = params[paramKey];
+        if (paramElement) {
+          if (paramElement.type === 'checkbox') {
+            paramElement.checked = paramValue;
+          } else {
+            paramElement.value = paramValue;
+          }
+          triggerEvent(paramElement, paramElement.type === 'checkbox' ? 'change' : 'input');
+        }
+      }, delay);
+      delay += 250;
+    });
+  });
+
 }
