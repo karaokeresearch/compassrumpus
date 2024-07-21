@@ -1484,3 +1484,38 @@ function playBearing(data) {
   console.log('Starting bearing updates...');
   requestAnimationFrame(updateBearing);
 }
+
+
+function playRaceStartTones() {
+  const toneDuration = 2.5;  // duration of each tone in seconds
+  const toneSpacing = 1;     // time between tones in seconds
+
+  // Function to create and play a tone
+  function playTone(frequency, startTime) {
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
+
+    oscillator.type = 'sine'; // Simple sine wave
+    oscillator.frequency.setValueAtTime(frequency, context.currentTime + startTime);
+    gainNode.gain.setValueAtTime(1, context.currentTime + startTime); // Max volume
+    gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + startTime + toneDuration);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(postFXbus);
+
+    oscillator.start(context.currentTime + startTime);
+    oscillator.stop(context.currentTime + startTime + toneDuration);
+
+    // Disconnect after the tone has finished playing
+    oscillator.onended = () => {
+      gainNode.disconnect(postFXbus);
+      oscillator.disconnect(gainNode);
+    };
+  }
+
+  // Play three lower tones and then one an octave higher
+  playTone(440, 0);                              // A4
+  playTone(440, toneSpacing);                    // A4
+  playTone(440, 2 * toneSpacing);                // A4
+  playTone(880, 3 * toneSpacing);                // A5 (an octave higher)
+}
