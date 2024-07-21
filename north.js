@@ -1117,7 +1117,7 @@ function getEffectRackValues(fxId) {
     if (input.type === 'checkbox') {
       fxParams[input.id] = input.checked;
     } else if (input.type === 'range') {
-      fxParams[input.id] = parseInt(input.value, 10);
+      fxParams[input.id] = Number(input.value);
     } else {
       fxParams[input.id] = input.value;
     }
@@ -1389,7 +1389,7 @@ function applySettings(settings) {
           triggerEvent(paramElement, paramElement.type === 'checkbox' ? 'change' : 'input');
         }
       }, delay);
-      delay += 250;
+      delay += 5;
     });
   });
 
