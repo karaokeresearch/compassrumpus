@@ -515,24 +515,26 @@ function directionChanged(){
 
 }
 
+let orientationPlaybackHappening=false; //if we're playing back orientation, ignore the compass--
 
 function handleOrientation(event) {
  
   // Check if alpha (compass direction) is available
-      
-    bearing = event.webkitCompassHeading || Math.abs(event.alpha - 360);
-    bearing = bearing + declination;
-    if (bearing > 360) {
-      bearing = bearing - 360;
-    }
-    if (bearing < 0) {
-      bearing = bearing + 360;
-    }
-    globalBearing=bearing;
-    if (started==true){
-      directionChanged();
-    }
-    
+    if (orientationPlaybackHappening==false){
+      bearing = event.webkitCompassHeading || Math.abs(event.alpha - 360);
+      bearing = bearing + declination;
+      if (bearing > 360) {
+        bearing = bearing - 360;
+      }
+      if (bearing < 0) {
+        bearing = bearing + 360;
+      }
+      globalBearing=bearing;
+
+      if (started==true){
+        directionChanged();
+      }
+    }    
   }
 
 let globalBearing=0;
@@ -608,12 +610,14 @@ if ('ontouchstart' in window) {
   letter2.addEventListener("mousedown", function() {playStinger(2);});
   
   document.addEventListener('mousemove', function(event) {
-    var mouseX = event.clientX; // X coordinate of the mouse pointer
-    //let's make this into a defacto slider so you can use the instrument on PC without a compass
-    var sliderValue = mouseX / (window.innerWidth / 1000);
-    sliderValue = sliderValue % 360;
-    globalBearing=sliderValue;
-    directionChanged();
+    if (orientationPlaybackHappening==false){
+      var mouseX = event.clientX; // X coordinate of the mouse pointer
+      //let's make this into a defacto slider so you can use the instrument on PC without a compass
+      var sliderValue = mouseX / (window.innerWidth / 1000);
+      sliderValue = sliderValue % 360;
+      globalBearing=sliderValue;
+      directionChanged();
+    }
   });
   
 
@@ -1393,4 +1397,90 @@ function applySettings(settings) {
     });
   });
 
+}
+
+
+
+
+
+//-----BEARING PLAYBACK
+document.getElementById('loadBearingButton').addEventListener('click', function() {
+  document.getElementById('bearingFileInput').click();
+});
+
+document.getElementById('bearingFileInput').addEventListener('change', function(event) {
+  const file = event.target.files[0];
+  if (file && file.name.endsWith('.csv')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+          const content = e.target.result;
+          const data = parseCSV(content);
+          if (data) {
+              window.bearingData = data;
+              document.getElementById('playBearingButton').disabled = false;
+              console.log('CSV loaded successfully');
+          } else {
+              console.log('Failed to parse CSV.');
+          }
+      };
+      reader.readAsText(file);
+  } else {
+      console.log('No valid CSV file selected.');
+  }
+});
+
+document.getElementById('playBearingButton').addEventListener('click', function() {
+  if (window.bearingData) {
+      console.log('Starting playback...');
+      playBearing(window.bearingData);
+  } else {
+      console.log('No bearing data available.');
+  }
+});
+
+function parseCSV(content) {
+  const lines = content.trim().split('\n');
+  const result = [];
+  lines.forEach(line => {
+      const [ms, bearing] = line.split(',');
+      if (!isNaN(ms) && !isNaN(bearing)) {
+          result.push({ ms: parseFloat(ms), bearing: parseFloat(bearing) });
+      } else {
+          console.log('Invalid data line:', line);
+      }
+  });
+  return result.length > 0 ? result : null;
+}
+
+function playBearing(data) {
+  orientationPlaybackHappening = true;
+  const startTime = Date.now();
+  let currentIndex = 0;
+
+  function updateBearing() {
+      const currentTime = Date.now() - startTime;
+      //console.log('Current time:', currentTime, 'ms');
+      
+      while (currentIndex < data.length) {
+          //console.log(`Checking data index ${currentIndex}: ms=${data[currentIndex].ms}, bearing=${data[currentIndex].bearing}`);
+          if (data[currentIndex].ms <= currentTime) {
+              globalBearing = data[currentIndex].bearing;
+              //console.log('Bearing updated:', globalBearing);
+              directionChanged();
+              currentIndex++;
+          } else {
+              break;
+          }
+      }
+      
+      if (currentIndex < data.length) {
+          requestAnimationFrame(updateBearing);
+      } else {
+          orientationPlaybackHappening = false;
+          console.log('Playback finished.');
+      }
+  }
+
+  console.log('Starting bearing updates...');
+  requestAnimationFrame(updateBearing);
 }
