@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Angle Tone</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    #startButton {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+    }
+    #angleDisplay {
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Angle Tone</h1>
+  <p>
+    When your phone is flat on a table (β ≃ 0°), the tone is loudest.<br>
+    As you tilt it up or down, it gets quieter and becomes silent if tilted more than 30° away from flat.
+  </p>
+  <button id="startButton">Start</button>
+  <div id="angleDisplay">Angle (β): N/A</div>
+
+  <script>
+    let audioCtx, oscillator, gainNode;
+    let started = false;
+
+    function startTone() {
+      if (started) return;
+      started = true;
+      document.getElementById("startButton").disabled = true;
+
+      // Create AudioContext, oscillator, and gain node.
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      oscillator = audioCtx.createOscillator();
+      gainNode = audioCtx.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 440; // A4 tone
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      // Start with full volume (will be adjusted immediately by orientation events)
+      gainNode.gain.value = 1;
+      oscillator.start();
+
+      // For iOS 13+ devices, request permission to use device orientation.
+      if (typeof DeviceOrientationEvent !== 'undefined' &&
+          typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(response => {
+            if (response === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation);
+            } else {
+              alert("Permission to access device orientation was denied.");
+            }
+          })
+          .catch(console.error);
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    }
+
+    function handleOrientation(event) {
+      if (event.beta === null) return;
+
+      // Use the β angle (in degrees) as the tilt away from flat.
+      // When the phone is flat on a table, β is around 0.
+      // As you tilt it, |β| increases.
+      // We want maximum volume when |β| is 0,
+      // decreasing linearly to 0 volume when |β| reaches 45°.
+      let beta = event.beta;
+      let absBeta = Math.abs(beta);
+      let volume = absBeta <= 45 ? 1 - (absBeta / 45) : 0;
+
+      gainNode.gain.value = volume;
+
+      // Display the angle and volume on screen.
+      document.getElementById('angleDisplay').textContent =
+        'Angle (β): ' + beta.toFixed(1) + '° | Volume: ' + volume.toFixed(2);
+    }
+
+    document.getElementById("startButton").addEventListener("click", startTone);
+  </script>
+</body>
+</html>
