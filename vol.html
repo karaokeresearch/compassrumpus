@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Angle Tone</title>
+  <title>Angle Tone - Horizontal Mapping</title>
   <style>
     body {
       font-family: sans-serif;
@@ -23,8 +23,8 @@
 <body>
   <h1>Angle Tone</h1>
   <p>
-    When your phone is flat on a table (β ≃ 0°), the tone is loudest.<br>
-    As you tilt it up or down, it gets quieter and becomes silent if tilted more than 30° away from flat.
+    When your phone is flat on a table (either face up or face down), the tone is loudest.<br>
+    As you tilt it up or down more than 30° from horizontal, the tone becomes silent.
   </p>
   <button id="startButton">Start</button>
   <div id="angleDisplay">Angle (β): N/A</div>
@@ -49,7 +49,7 @@
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
 
-      // Start with full volume (will be adjusted immediately by orientation events)
+      // Start at maximum volume (will be updated by orientation events)
       gainNode.gain.value = 1;
       oscillator.start();
 
@@ -72,21 +72,25 @@
 
     function handleOrientation(event) {
       if (event.beta === null) return;
-
-      // Use the β angle (in degrees) as the tilt away from flat.
-      // When the phone is flat on a table, β is around 0.
-      // As you tilt it, |β| increases.
-      // We want maximum volume when |β| is 0,
-      // decreasing linearly to 0 volume when |β| reaches 45°.
+      
+      // The β angle (in degrees) can be in the range [-180, 180].
+      // We want maximum volume when the phone is horizontal,
+      // whether that's β ≃ 0° (face up) or β ≃ 180° (or -180° for face down).
+      // Compute the effective deviation from horizontal:
+      //   deviation = min(|β|, |180 - |β||)
       let beta = event.beta;
       let absBeta = Math.abs(beta);
-      let volume = absBeta <= 45 ? 1 - (absBeta / 45) : 0;
-
+      let deviation = Math.min(absBeta, Math.abs(180 - absBeta));
+      
+      // Map deviation to volume: full volume when deviation = 0,
+      // linearly fading to 0 when deviation >= 30°.
+      let volume = deviation <= 30 ? 1 - (deviation / 30) : 0;
+      
       gainNode.gain.value = volume;
-
-      // Display the angle and volume on screen.
+      
+      // Display the beta angle, effective deviation, and computed volume.
       document.getElementById('angleDisplay').textContent =
-        'Angle (β): ' + beta.toFixed(1) + '° | Volume: ' + volume.toFixed(2);
+        `Angle (β): ${beta.toFixed(1)}° | Deviation: ${deviation.toFixed(1)}° | Volume: ${volume.toFixed(2)}`;
     }
 
     document.getElementById("startButton").addEventListener("click", startTone);
