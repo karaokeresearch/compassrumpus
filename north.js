@@ -111,7 +111,7 @@ function initAudio(){
  analyser = context.createAnalyser();
  analyser.fftSize = 2048;
  postFXbus.connect(analyser);
-
+ loadRandomProfile();
   //
   
   

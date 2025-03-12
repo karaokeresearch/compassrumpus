@@ -31,7 +31,7 @@
     "fx1": {
       "effect": "Gain",
       "params": {
-        "fx1_gain": 3.60705172813732,
+        "fx1_gain": 4.07098121085595,
         "fx1_bypass": false,
         "magneticAlignment1_gain": "N"
       }
@@ -39,8 +39,8 @@
     "fx2": {
       "effect": "PingPongDelay",
       "params": {
-        "fx2_wetLevel": 0.639294827186268,
-        "fx2_feedback": 0.306412029806791,
+        "fx2_wetLevel": 0.592901878914405,
+        "fx2_feedback": 0.243228771585382,
         "fx2_delayTimeLeft": 200,
         "fx2_delayTimeRight": 400,
         "fx2_bypass": false,
@@ -48,6 +48,25 @@
         "magneticAlignment2_feedback": "",
         "magneticAlignment2_delayTimeLeft": "",
         "magneticAlignment2_delayTimeRight": ""
+      }
+    },
+    "fx3": {
+      "effect": "Compressor",
+      "params": {
+        "fx3_threshold": -20,
+        "fx3_makeupGain": 5.0982553210477,
+        "fx3_attack": 1,
+        "fx3_release": 250,
+        "fx3_ratio": 4,
+        "fx3_knee": 5,
+        "fx3_automakeup": true,
+        "fx3_bypass": false,
+        "magneticAlignment3_threshold": "",
+        "magneticAlignment3_makeupGain": "",
+        "magneticAlignment3_attack": "",
+        "magneticAlignment3_release": "",
+        "magneticAlignment3_ratio": "",
+        "magneticAlignment3_knee": ""
       }
     }
   }

@@ -7,7 +7,7 @@
     "chordVolume": 0,
     "stingVolume": 90,
     "autoplay": true,
-    "autoplayms": 1500,
+    "autoplayms": 1441,
     "chordFileSelect": "chord_8_bit.wav",
     "stingerFileSelect": "Mallet"
   },
@@ -30,11 +30,11 @@
       "effect": "WahWah",
       "params": {
         "fx1_automode": true,
-        "fx1_baseFrequency": 0.818621277978633,
-        "fx1_excursionOctaves": 3.3,
-        "fx1_sweep": 0.35,
+        "fx1_baseFrequency": 0.259560037481594,
+        "fx1_excursionOctaves": 1.5519610905359,
+        "fx1_sweep": 0.623845433046272,
         "fx1_resonance": 19,
-        "fx1_sensitivity": -0.5,
+        "fx1_sensitivity": -0.827011735308554,
         "fx1_bypass": false,
         "magneticAlignment1_baseFrequency": "",
         "magneticAlignment1_excursionOctaves": "",
@@ -63,11 +63,11 @@
     "fx3": {
       "effect": "MoogFilter",
       "params": {
-        "fx3_cutoff": 0.117525,
+        "fx3_cutoff": 0.183382045929019,
         "fx3_resonance": 3.5,
         "fx3_bufferSize": 4096,
         "fx3_bypass": false,
-        "magneticAlignment3_cutoff": "S",
+        "magneticAlignment3_cutoff": "N",
         "magneticAlignment3_resonance": "",
         "magneticAlignment3_bufferSize": ""
       }

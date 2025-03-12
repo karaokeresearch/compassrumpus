@@ -58,7 +58,7 @@
     "fx3": {
       "effect": "Overdrive",
       "params": {
-        "fx3_outputGain": 0,
+        "fx3_outputGain": -6.34251037436973,
         "fx3_drive": 0.350773855465735,
         "fx3_curveAmount": 0.979,
         "fx3_algorithmIndex": 0,
@@ -72,7 +72,7 @@
     "fx4": {
       "effect": "Panner",
       "params": {
-        "fx4_pan": 0.462777777777778,
+        "fx4_pan": 0.350266759452563,
         "fx4_bypass": false,
         "magneticAlignment4_pan": "E"
       }
