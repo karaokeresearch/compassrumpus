@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "mainSettings": {
+    "chordVoice0": true,
+    "chordVoice1": true,
+    "chordVoice2": true,
+    "chordVolume": 76,
+    "stingVolume": 15,
+    "autoplay": false,
+    "autoplayms": 300,
+    "chordFileSelect": "chord_vox_low.wav",
+    "stingerFileSelect": "Classic"
+  },
+  "effectsRack": {
+    "fx0": {
+      "effect": "Phaser",
+      "params": {
+        "fx0_rate": 7.260925,
+        "fx0_depth": 0.9075,
+        "fx0_feedback": 0.7,
+        "fx0_stereoPhase": 40,
+        "fx0_baseModulationFrequency": 700,
+        "fx0_bypass": false,
+        "magneticAlignment0_rate": "E",
+        "magneticAlignment0_depth": "E",
+        "magneticAlignment0_feedback": "",
+        "magneticAlignment0_stereoPhase": "",
+        "magneticAlignment0_baseModulationFrequency": ""
+      }
+    },
+    "fx1": {
+      "effect": "WahWah",
+      "params": {
+        "fx1_automode": false,
+        "fx1_baseFrequency": 0.0925000000000003,
+        "fx1_excursionOctaves": 3.3,
+        "fx1_sweep": 0.35,
+        "fx1_resonance": 19,
+        "fx1_sensitivity": -0.5,
+        "fx1_bypass": false,
+        "magneticAlignment1_baseFrequency": "W",
+        "magneticAlignment1_excursionOctaves": "",
+        "magneticAlignment1_sweep": "",
+        "magneticAlignment1_resonance": "",
+        "magneticAlignment1_sensitivity": ""
+      }
+    },
+    "fx2": {
+      "effect": "PingPongDelay",
+      "params": {
+        "fx2_wetLevel": 0.5,
+        "fx2_feedback": 0.123055555555555,
+        "fx2_delayTimeLeft": 189,
+        "fx2_delayTimeRight": 545,
+        "fx2_bypass": false,
+        "magneticAlignment2_wetLevel": "",
+        "magneticAlignment2_feedback": "",
+        "magneticAlignment2_delayTimeLeft": "",
+        "magneticAlignment2_delayTimeRight": ""
+      }
+    },
+    "fx3": {
+      "effect": "Overdrive",
+      "params": {
+        "fx3_outputGain": -9.154,
+        "fx3_drive": 0.0725921111427063,
+        "fx3_curveAmount": 0.979,
+        "fx3_algorithmIndex": 5,
+        "fx3_bypass": false,
+        "magneticAlignment3_outputGain": "",
+        "magneticAlignment3_drive": "",
+        "magneticAlignment3_curveAmount": "",
+        "magneticAlignment3_algorithmIndex": ""
+      }
+    },
+    "fx4": {
+      "effect": "Compressor",
+      "params": {
+        "fx4_threshold": -81.8661900312792,
+        "fx4_makeupGain": 8.65495389365073,
+        "fx4_attack": 1,
+        "fx4_release": 250,
+        "fx4_ratio": 19.3377747085348,
+        "fx4_knee": 5,
+        "fx4_automakeup": true,
+        "fx4_bypass": false,
+        "magneticAlignment4_threshold": "",
+        "magneticAlignment4_makeupGain": "",
+        "magneticAlignment4_attack": "",
+        "magneticAlignment4_release": "",
+        "magneticAlignment4_ratio": "",
+        "magneticAlignment4_knee": ""
+      }
+    }
+  }
+}

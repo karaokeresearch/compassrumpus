@@ -1250,6 +1250,39 @@ function triggerEvent(element, eventType) {
 
 
 
+
+function loadRandomProfile() {
+  // Fetch the list of profile files
+  fetch('profiles/profiles.json')
+    .then(response => response.json())
+    .then(data => {
+      const files = data.files;
+      // Select a random file from the array
+      const randomFileName = files[Math.floor(Math.random() * files.length)];
+
+      // Log the filename to the console and display it in the div
+      console.log("Loading profile:", randomFileName);
+      document.getElementById('filename').textContent = randomFileName;
+
+      // Fetch the selected profile file from the profiles folder
+      return fetch('profiles/' + randomFileName);
+    })
+    .then(response => response.json())
+    .then(settings => {
+      // Apply the settings from the random profile
+      applySettings(settings);
+    })
+    .catch(error => {
+      console.error('Error loading random profile:', error);
+    });
+}
+
+// Attach the click event listener to the randomProfile button
+document.getElementById('randomProfile').addEventListener('click', loadRandomProfile);
+
+
+
+
 // Example function to load the settings (simulating file load)
 function loadProfileFromFile(file) {
   const reader = new FileReader();
@@ -1269,11 +1302,17 @@ document.getElementById('loadProfileButton').addEventListener('click', function(
 document.getElementById('fileInput').addEventListener('change', function(event) {
   const file = event.target.files[0];
   if (file && file.type === "application/json") {
+    // Log the filename and update the div
+    console.log("Loading profile:", file.name);
+    document.getElementById('filename').textContent = file.name;
+    
+    // Load the profile from the file
     loadProfileFromFile(file);
   } else {
     console.error('Please select a valid JSON file.');
   }
 });
+
 
 // Helper function to set a setting with delay
 function setSettingWithDelay(settingFunction, delay) {

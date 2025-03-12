@@ -152,13 +152,15 @@ label {
                 <div class="compass-display">
                     <img id="terriblecompass" onclick="startOrientation()" src="media/bettercompass.png" alt="Compass">
                 </div>
+                <div id="filename"></div>
             </div>
             <div class="playback-control-panel">
                 <!-- record and save buttons for audio -->
+                <button id="randomProfile">Random Profile</button>
                 <button id="loadProfileButton">Load Profile</button>
                 <input type="file" id="fileInput" accept=".json" style="display: none;">
                 <button id="saveProfileButton">Save Profile</button>
-                <br><br>
+                <br>
                 <button id="recordAudioButton" onclick="recordAudio()">Record Audio/Bearing</button>
                 <button id="stopAudioButton" onclick="stopRecordingAudio()">Stop</button>
                 <button id="saveAudioButton" onclick="saveRecordedAudio()">Save Audio</button>

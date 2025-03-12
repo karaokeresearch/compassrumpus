@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "mainSettings": {
+    "chordVoice0": true,
+    "chordVoice1": false,
+    "chordVoice2": true,
+    "chordVolume": 75,
+    "stingVolume": 15,
+    "autoplay": false,
+    "autoplayms": 300,
+    "chordFileSelect": "chord_8_bit.wav",
+    "stingerFileSelect": "Classic"
+  },
+  "effectsRack": {
+    "fx1": {
+      "effect": "Gain",
+      "params": {
+        "fx1_gain": 8.4806309440965,
+        "fx1_bypass": false,
+        "magneticAlignment1_gain": "S"
+      }
+    },
+    "fx2": {
+      "effect": "Gain",
+      "params": {
+        "fx2_gain": 0.693409486412922,
+        "fx2_bypass": false,
+        "magneticAlignment2_gain": ""
+      }
+    },
+    "fx3": {
+      "effect": "PingPongDelay",
+      "params": {
+        "fx3_wetLevel": 0.15193690559035,
+        "fx3_feedback": 0.320289143724064,
+        "fx3_delayTimeLeft": 150,
+        "fx3_delayTimeRight": 445,
+        "fx3_bypass": false,
+        "magneticAlignment3_wetLevel": "N",
+        "magneticAlignment3_feedback": "",
+        "magneticAlignment3_delayTimeLeft": "",
+        "magneticAlignment3_delayTimeRight": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "mainSettings": {
+    "chordVoice0": true,
+    "chordVoice1": false,
+    "chordVoice2": true,
+    "chordVolume": 0,
+    "stingVolume": 66,
+    "autoplay": true,
+    "autoplayms": 43,
+    "chordFileSelect": "chord_organ.wav",
+    "stingerFileSelect": "Classic"
+  },
+  "effectsRack": {
+    "fx0": {
+      "effect": "MoogFilter",
+      "params": {
+        "fx0_cutoff": 0.599325,
+        "fx0_resonance": 3.5,
+        "fx0_bufferSize": 4096,
+        "fx0_bypass": false,
+        "magneticAlignment0_cutoff": "E",
+        "magneticAlignment0_resonance": "",
+        "magneticAlignment0_bufferSize": ""
+      }
+    },
+    "fx1": {
+      "effect": "PingPongDelay",
+      "params": {
+        "fx1_wetLevel": 0.5,
+        "fx1_feedback": 0.435277777777778,
+        "fx1_delayTimeLeft": 200,
+        "fx1_delayTimeRight": 1500,
+        "fx1_bypass": false,
+        "magneticAlignment1_wetLevel": "",
+        "magneticAlignment1_feedback": "",
+        "magneticAlignment1_delayTimeLeft": "",
+        "magneticAlignment1_delayTimeRight": ""
+      }
+    },
+    "fx2": {
+      "effect": "Phaser",
+      "params": {
+        "fx2_rate": 4.76626944444444,
+        "fx2_depth": 0.595277777777778,
+        "fx2_feedback": 0.7,
+        "fx2_stereoPhase": 40,
+        "fx2_baseModulationFrequency": 700,
+        "fx2_bypass": false,
+        "magneticAlignment2_rate": "E",
+        "magneticAlignment2_depth": "E",
+        "magneticAlignment2_feedback": "",
+        "magneticAlignment2_stereoPhase": "",
+        "magneticAlignment2_baseModulationFrequency": ""
+      }
+    },
+    "fx4": {
+      "effect": "Overdrive",
+      "params": {
+        "fx4_outputGain": 0,
+        "fx4_drive": 0.0127960352601861,
+        "fx4_curveAmount": 0.979,
+        "fx4_algorithmIndex": 0,
+        "fx4_bypass": false,
+        "magneticAlignment4_outputGain": "",
+        "magneticAlignment4_drive": "",
+        "magneticAlignment4_curveAmount": "",
+        "magneticAlignment4_algorithmIndex": ""
+      }
+    }
+  }
+}

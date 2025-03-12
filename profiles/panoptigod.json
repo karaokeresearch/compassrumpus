@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "mainSettings": {
+    "chordVoice0": true,
+    "chordVoice1": true,
+    "chordVoice2": true,
+    "chordVolume": 100,
+    "stingVolume": 100,
+    "autoplay": false,
+    "autoplayms": 705,
+    "chordFileSelect": "chord_organ.wav",
+    "stingerFileSelect": "Classic"
+  },
+  "effectsRack": {
+    "fx0": {
+      "effect": "Chorus",
+      "params": {
+        "fx0_rate": 1.5,
+        "fx0_feedback": 0.4,
+        "fx0_depth": 0.7,
+        "fx0_delay": 0.0045,
+        "fx0_bypass": false,
+        "magneticAlignment0_rate": "",
+        "magneticAlignment0_feedback": "",
+        "magneticAlignment0_depth": "",
+        "magneticAlignment0_delay": ""
+      }
+    },
+    "fx1": {
+      "effect": "PingPongDelay",
+      "params": {
+        "fx1_wetLevel": 0.5,
+        "fx1_feedback": 0.892675793151075,
+        "fx1_delayTimeLeft": 200,
+        "fx1_delayTimeRight": 1084,
+        "fx1_bypass": false,
+        "magneticAlignment1_wetLevel": "",
+        "magneticAlignment1_feedback": "",
+        "magneticAlignment1_delayTimeLeft": "",
+        "magneticAlignment1_delayTimeRight": ""
+      }
+    },
+    "fx2": {
+      "effect": "PingPongDelay",
+      "params": {
+        "fx2_wetLevel": 0.5,
+        "fx2_feedback": 0.936872892716416,
+        "fx2_delayTimeLeft": 80,
+        "fx2_delayTimeRight": 496,
+        "fx2_bypass": false,
+        "magneticAlignment2_wetLevel": "",
+        "magneticAlignment2_feedback": "",
+        "magneticAlignment2_delayTimeLeft": "",
+        "magneticAlignment2_delayTimeRight": ""
+      }
+    },
+    "fx3": {
+      "effect": "PingPongDelay",
+      "params": {
+        "fx3_wetLevel": 0.5,
+        "fx3_feedback": 0.996668968598936,
+        "fx3_delayTimeLeft": 138,
+        "fx3_delayTimeRight": 242,
+        "fx3_bypass": false,
+        "magneticAlignment3_wetLevel": "",
+        "magneticAlignment3_feedback": "",
+        "magneticAlignment3_delayTimeLeft": "",
+        "magneticAlignment3_delayTimeRight": ""
+      }
+    },
+    "fx4": {
+      "effect": "Convolver",
+      "params": {
+        "fx4_highCut": 22050,
+        "fx4_lowCut": 20,
+        "fx4_dryLevel": 1,
+        "fx4_wetLevel": 1,
+        "fx4_level": 1,
+        "fx4_impulse": "impulses/impulse_rev.wav",
+        "fx4_bypass": false,
+        "magneticAlignment4_highCut": "",
+        "magneticAlignment4_lowCut": "",
+        "magneticAlignment4_dryLevel": "",
+        "magneticAlignment4_wetLevel": "",
+        "magneticAlignment4_level": ""
+      }
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "version": "1.0",
+  "mainSettings": {
+    "chordVoice0": true,
+    "chordVoice1": true,
+    "chordVoice2": true,
+    "chordVolume": 0,
+    "stingVolume": 15,
+    "autoplay": true,
+    "autoplayms": 269,
+    "chordFileSelect": "chord_8_bit.wav",
+    "stingerFileSelect": "Mallet"
+  },
+  "effectsRack": {
+    "fx0": {
+      "effect": "WahWah",
+      "params": {
+        "fx0_automode": true,
+        "fx0_baseFrequency": 0.191388888888889,
+        "fx0_excursionOctaves": 2.83430149896413,
+        "fx0_sweep": 0.296461794694723,
+        "fx0_resonance": 100,
+        "fx0_sensitivity": 0.505158223991551,
+        "fx0_bypass": false,
+        "magneticAlignment0_baseFrequency": "",
+        "magneticAlignment0_excursionOctaves": "",
+        "magneticAlignment0_sweep": "",
+        "magneticAlignment0_resonance": "",
+        "magneticAlignment0_sensitivity": ""
+      }
+    },
+    "fx1": {
+      "effect": "MoogFilter",
+      "params": {
+        "fx1_cutoff": 0.308001381159361,
+        "fx1_resonance": 3.37116626721371,
+        "fx1_bufferSize": 4096,
+        "fx1_bypass": false,
+        "magneticAlignment1_cutoff": "",
+        "magneticAlignment1_resonance": "",
+        "magneticAlignment1_bufferSize": ""
+      }
+    },
+    "fx2": {
+      "effect": "PingPongDelay",
+      "params": {
+        "fx2_wetLevel": 0.534630539870821,
+        "fx2_feedback": 1,
+        "fx2_delayTimeLeft": 80,
+        "fx2_delayTimeRight": 1279,
+        "fx2_bypass": false,
+        "magneticAlignment2_wetLevel": "",
+        "magneticAlignment2_feedback": "",
+        "magneticAlignment2_delayTimeLeft": "",
+        "magneticAlignment2_delayTimeRight": ""
+      }
+    },
+    "fx3": {
+      "effect": "Overdrive",
+      "params": {
+        "fx3_outputGain": 0,
+        "fx3_drive": 0.350773855465735,
+        "fx3_curveAmount": 0.979,
+        "fx3_algorithmIndex": 0,
+        "fx3_bypass": false,
+        "magneticAlignment3_outputGain": "",
+        "magneticAlignment3_drive": "",
+        "magneticAlignment3_curveAmount": "",
+        "magneticAlignment3_algorithmIndex": ""
+      }
+    },
+    "fx4": {
+      "effect": "Panner",
+      "params": {
+        "fx4_pan": 0.462777777777778,
+        "fx4_bypass": false,
+        "magneticAlignment4_pan": "E"
+      }
+    }
+  }
+}
