@@ -84,9 +84,10 @@
       
       // Map deviation to volume: full volume when deviation = 0,
       // linearly fading to 0 when deviation >= 30°.
-      let volume = deviation <= 30 ? 1 - (deviation / 30) : 0;
+      let volume = deviation <= 50 ? 1 - (deviation / 50) : 0;
       
-      gainNode.gain.value = volume;
+      //we sadly have to smooth the values, otherwise there are buzzing artifacts
+      gainNode.gain.setTargetAtTime(volume, audioCtx.currentTime, 0.003);
       
       // Display the beta angle, effective deviation, and computed volume.
       document.getElementById('angleDisplay').textContent =
