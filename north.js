@@ -70,6 +70,7 @@ let context;
 let tuna;
 let lineOut;
 let preFXbus;
+let preFXbusGain;
 let postFXbus;
 
 let mediaRecorder;
@@ -102,9 +103,10 @@ function initAudio(){
   //create a pre-fx bus. Everything runs into this before hitting the FX in order to have a bus but also:
   //ceate a panner node called preFXbus, panner because it will force the mono inputs to stereo
   preFXbus = context.createStereoPanner();
-
-  //until we add effects, these are just directly connected
-  preFXbus.connect(postFXbus);
+  preFXbusGain = context.createGain();
+  
+  preFXbus.connect(preFXbusGain);
+  preFXbusGain.connect(postFXbus);
   
 
  // Create an AnalyserNode
@@ -891,12 +893,12 @@ elements.forEach(function(element) {
         }
       }
       //disconnect the preFXbus from whatever it's attached to
-      preFXbus.disconnect();
+      preFXbusGain.disconnect();
       //connect the preFXbus to the first fxNode
       if (anyDefined) {
-        preFXbus.connect(fxNode[lastNum]);
+        preFXbusGain.connect(fxNode[lastNum]);
       }else{
-        preFXbus.connect(postFXbus);
+        preFXbusGain.connect(postFXbus);
       }
 
     });
