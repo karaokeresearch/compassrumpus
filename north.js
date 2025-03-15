@@ -520,67 +520,81 @@ function directionChanged(){
 let orientationPlaybackHappening=false; //if we're playing back orientation, ignore the compass--
 
 function handleOrientation(event) {
- 
-  // Check if alpha (compass direction) is available
-    if (orientationPlaybackHappening==false){
-      bearing = event.webkitCompassHeading || Math.abs(event.alpha - 360);
-      bearing = bearing + declination;
-      if (bearing > 360) {
-        bearing = bearing - 360;
-      }
-      if (bearing < 0) {
-        bearing = bearing + 360;
-      }
-      globalBearing=bearing;
-
-      if (started==true){
-        directionChanged();
-      }
-      
-
-     
-
-      if (event.beta === null) return;
+  // First, process the compass (alpha) values if needed.
+  if (orientationPlaybackHappening == false) {
+    bearing = event.webkitCompassHeading || Math.abs(event.alpha - 360);
+    bearing = bearing + declination;
+    if (bearing > 360) {
+      bearing = bearing - 360;
+    }
+    if (bearing < 0) {
+      bearing = bearing + 360;
+    }
+    globalBearing = bearing;
   
-      let beta = event.beta;
-      
-      if (beta <= 0) {
-        // For beta <= 0:
-        // preFXbusGain remains at full gain.
-        preFXbusGain.gain.setTargetAtTime(1, context.currentTime, 0.004);
-        
-        // postFXbus drops linearly from 1 at 0° to 0 at -50°.
-        let postGain = (Math.abs(beta) <= 50) ? 1 - (Math.abs(beta) / 50) : 0;
-        postFXbus.gain.setTargetAtTime(postGain, context.currentTime, 0.004);
-        
-        document.getElementById('volinfo').textContent =
-          `Beta: ${beta.toFixed(1)}° | preFXbusGain: 1 | postFXbus: ${postGain.toFixed(2)}`;
-        
-      } else {
-        // For beta > 0:
-        // postFXbus remains at full gain.
-        postFXbus.gain.setTargetAtTime(1, context.currentTime, 0.004);
-        
-        // preFXbusGain drops linearly from 1 at 0° to 0 at 50°.
-        let preGain = (beta <= 50) ? 1 - (beta / 50) : 0;
-        preFXbusGain.gain.setTargetAtTime(preGain, context.currentTime, 0.004);
-        
-        document.getElementById('volinfo').textContent =
-          `Beta: ${beta.toFixed(1)}° | preFXbusGain: ${preGain.toFixed(2)} | postFXbus: 1`;
-      }
-
-
-
-
-
-    }    
-
-
-
-
-
-
+    if (started == true) {
+      directionChanged();
+    }
   }
+
+  if (event.beta === null) return;
+  
+  let beta = event.beta;
+  let preGain, postGain;
+  
+  if (beta >= 0) {
+    // Positive beta branch (front side is up or tilting)
+    if (beta <= 50) {
+      // From 0° to 50°: pre bus ramps down from 1 to 0.
+      preGain = 1 - (beta / 50);
+      postGain = 1;
+    } else if (beta < 130) {
+      // From 50° to 130°: keep pre bus at 0, post bus at 1.
+      preGain = 0;
+      postGain = 1;
+    } else if (beta <= 180) {
+      // From 130° to 180°: ramp pre bus back up from 0 to 1.
+      preGain = (beta - 130) / 50;
+      postGain = 1;
+    } else {
+      // Out of expected range; default to flat.
+      preGain = 1;
+      postGain = 1;
+    }
+  } else {
+    // Negative beta branch (i.e. beta between -180 and 0).
+    // Use the absolute value for mapping.
+    let x = Math.abs(beta);
+    if (x <= 50) {
+      // From 0° to 50° (i.e. 0 to -50°): post bus ramps down from 1 to 0.
+      postGain = 1 - (x / 50);
+      preGain = 1;
+    } else if (x < 130) {
+      // From 50° to 130° (i.e. -50° to -130°): post bus remains at 0.
+      postGain = 0;
+      preGain = 1;
+    } else if (x <= 180) {
+      // From 130° to 180° (i.e. -130° to -180°): ramp post bus back up from 0 to 1.
+      postGain = (x - 130) / 50;
+      preGain = 1;
+    } else {
+      // Out of expected range; default to flat.
+      preGain = 1;
+      postGain = 1;
+    }
+  }
+  
+  // Update the gain nodes smoothly.
+  preFXbusGain.gain.setTargetAtTime(preGain, context.currentTime, 0.004);
+  postFXbus.gain.setTargetAtTime(postGain, context.currentTime, 0.004);
+  
+  // Update diagnostic information.
+  document.getElementById('volinfo').textContent =
+    `Beta: ${beta.toFixed(1)}° | preFXbusGain: ${preGain.toFixed(2)} | postFXbus: ${postGain.toFixed(2)}`;
+}
+
+
+
 
 let globalBearing=0;
 
