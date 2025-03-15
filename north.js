@@ -536,7 +536,39 @@ function handleOrientation(event) {
       if (started==true){
         directionChanged();
       }
+      document.getElementById('volinfo').textContent ="asdf";
+
+      if (event.beta === null) return;
+      
+      // The β angle (in degrees) can be in the range [-180, 180].
+      // We want maximum volume when the phone is horizontal,
+      // whether that's β ≃ 0° (face up) or β ≃ 180° (or -180° for face down).
+      // Compute the effective deviation from horizontal:
+      //   deviation = min(|β|, |180 - |β||)
+      let beta = event.beta;
+      let absBeta = Math.abs(beta);
+      let deviation = Math.min(absBeta, Math.abs(180 - absBeta));
+      
+      // Map deviation to volume: full volume when deviation = 0,
+      // linearly fading to 0 when deviation >= 30°.
+      let deviceVolume = deviation <= 50 ? 1 - (deviation / 50) : 0;
+      document.getElementById('volinfo').textContent ="hijk";
+      //we sadly have to smooth the values, otherwise there are buzzing artifacts
+      postFXbus.gain.setTargetAtTime(deviceVolume, context.currentTime, 0.004);
+      document.getElementById('volinfo').textContent = `Beta: ${beta.toFixed(1)}° | Abs Beta: ${absBeta.toFixed(1)}° | Volume: ${deviceVolume.toFixed(2)}`;
+
+
+
+
+
+
     }    
+
+
+
+
+
+
   }
 
 let globalBearing=0;

@@ -87,7 +87,7 @@
       let volume = deviation <= 50 ? 1 - (deviation / 50) : 0;
       
       //we sadly have to smooth the values, otherwise there are buzzing artifacts
-      gainNode.gain.setTargetAtTime(volume, audioCtx.currentTime, 0.003);
+      gainNode.gain.setTargetAtTime(volume, audioCtx.currentTime, 0.004);
       
       // Display the beta angle, effective deviation, and computed volume.
       document.getElementById('angleDisplay').textContent =
