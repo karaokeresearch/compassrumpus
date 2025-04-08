@@ -47,7 +47,7 @@
         "fx2_wetLevel": 0.534630539870821,
         "fx2_feedback": 1,
         "fx2_delayTimeLeft": 80,
-        "fx2_delayTimeRight": 1279,
+        "fx2_delayTimeRight": 308,
         "fx2_bypass": false,
         "magneticAlignment2_wetLevel": "",
         "magneticAlignment2_feedback": "",
@@ -72,7 +72,7 @@
     "fx4": {
       "effect": "Panner",
       "params": {
-        "fx4_pan": 0.350266759452563,
+        "fx4_pan": 0.400471142520612,
         "fx4_bypass": false,
         "magneticAlignment4_pan": "E"
       }

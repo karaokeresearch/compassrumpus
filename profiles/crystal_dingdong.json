@@ -4,7 +4,7 @@
     "chordVoice0": true,
     "chordVoice1": true,
     "chordVoice2": true,
-    "chordVolume": 76,
+    "chordVolume": 99,
     "stingVolume": 15,
     "autoplay": false,
     "autoplayms": 300,
@@ -15,8 +15,8 @@
     "fx0": {
       "effect": "Phaser",
       "params": {
-        "fx0_rate": 5.12630596149385,
-        "fx0_depth": 0.640338668522384,
+        "fx0_rate": 5.0559030231645,
+        "fx0_depth": 0.631527287004318,
         "fx0_feedback": 0.7,
         "fx0_stereoPhase": 40,
         "fx0_baseModulationFrequency": 700,
@@ -32,7 +32,7 @@
       "effect": "WahWah",
       "params": {
         "fx1_automode": false,
-        "fx1_baseFrequency": 0.359661331477616,
+        "fx1_baseFrequency": 0.368472712995682,
         "fx1_excursionOctaves": 3.3,
         "fx1_sweep": 0.35,
         "fx1_resonance": 19,
@@ -49,9 +49,9 @@
       "effect": "PingPongDelay",
       "params": {
         "fx2_wetLevel": 0.5,
-        "fx2_feedback": 0.123055555555555,
+        "fx2_feedback": 0.256079603766008,
         "fx2_delayTimeLeft": 189,
-        "fx2_delayTimeRight": 545,
+        "fx2_delayTimeRight": 261,
         "fx2_bypass": false,
         "magneticAlignment2_wetLevel": "",
         "magneticAlignment2_feedback": "",
@@ -77,7 +77,7 @@
       "effect": "Compressor",
       "params": {
         "fx4_threshold": -81.8661900312792,
-        "fx4_makeupGain": 18.1204319307483,
+        "fx4_makeupGain": 20,
         "fx4_attack": 1,
         "fx4_release": 250,
         "fx4_ratio": 19.3377747085348,
