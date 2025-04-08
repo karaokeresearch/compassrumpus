@@ -62,8 +62,8 @@
     "fx3": {
       "effect": "Overdrive",
       "params": {
-        "fx3_outputGain": -9.154,
-        "fx3_drive": 0.0725921111427063,
+        "fx3_outputGain": 0,
+        "fx3_drive": 0.291145296628883,
         "fx3_curveAmount": 0.979,
         "fx3_algorithmIndex": 5,
         "fx3_bypass": false,
