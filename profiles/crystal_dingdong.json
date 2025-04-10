@@ -4,7 +4,7 @@
     "chordVoice0": true,
     "chordVoice1": true,
     "chordVoice2": true,
-    "chordVolume": 99,
+    "chordVolume": 98,
     "stingVolume": 15,
     "autoplay": false,
     "autoplayms": 300,
@@ -15,8 +15,8 @@
     "fx0": {
       "effect": "Phaser",
       "params": {
-        "fx0_rate": 5.0559030231645,
-        "fx0_depth": 0.631527287004318,
+        "fx0_rate": 6.54598939929328,
+        "fx0_depth": 0.818021201413427,
         "fx0_feedback": 0.7,
         "fx0_stereoPhase": 40,
         "fx0_baseModulationFrequency": 700,
@@ -32,7 +32,7 @@
       "effect": "WahWah",
       "params": {
         "fx1_automode": false,
-        "fx1_baseFrequency": 0.368472712995682,
+        "fx1_baseFrequency": 0.181978798586573,
         "fx1_excursionOctaves": 3.3,
         "fx1_sweep": 0.35,
         "fx1_resonance": 19,
@@ -50,8 +50,8 @@
       "params": {
         "fx2_wetLevel": 0.5,
         "fx2_feedback": 0.256079603766008,
-        "fx2_delayTimeLeft": 189,
-        "fx2_delayTimeRight": 261,
+        "fx2_delayTimeLeft": 80,
+        "fx2_delayTimeRight": 120,
         "fx2_bypass": false,
         "magneticAlignment2_wetLevel": "",
         "magneticAlignment2_feedback": "",

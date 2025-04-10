@@ -55,17 +55,11 @@
       }
     },
     "fx3": {
-      "effect": "PingPongDelay",
+      "effect": "Gain",
       "params": {
-        "fx3_wetLevel": 0.5,
-        "fx3_feedback": 0.996668968598936,
-        "fx3_delayTimeLeft": 138,
-        "fx3_delayTimeRight": 242,
+        "fx3_gain": 1.80479905785367,
         "fx3_bypass": false,
-        "magneticAlignment3_wetLevel": "",
-        "magneticAlignment3_feedback": "",
-        "magneticAlignment3_delayTimeLeft": "",
-        "magneticAlignment3_delayTimeRight": ""
+        "magneticAlignment3_gain": ""
       }
     },
     "fx4": {
