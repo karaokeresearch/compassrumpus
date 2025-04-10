@@ -535,6 +535,7 @@ function sliderToGain(x) {
   return (linearGain - minGain) / (maxGain - minGain);
 }
 
+const arrow = document.getElementById('volinfo');
 
 function handleOrientation(event) {
   // First, process the compass (alpha) values if needed.
@@ -617,8 +618,9 @@ function handleOrientation(event) {
     postFXbus.gain.setTargetAtTime(postGain, context.currentTime, 0.004);
     
     // Update diagnostic information.
-    document.getElementById('volinfo').textContent =
-      `Beta: ${beta.toFixed(1)}° | Bearing: ${bearing.toFixed(1)}° | preFXbusGain: ${preGain.toFixed(2)} | postFXbus: ${postGain.toFixed(2)}`;
+    //document.getElementById('volinfo').textContent =
+    //  `Beta: ${beta.toFixed(1)}° | Bearing: ${bearing.toFixed(1)}° | preFXbusGain: ${preGain.toFixed(2)} | postFXbus: ${postGain.toFixed(2)}`;
+    arrow.style.transform = `rotate(${beta}deg)`;
   }
 }
 
