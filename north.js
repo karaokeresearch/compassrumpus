@@ -653,10 +653,16 @@ function startOrientation(){
 }
 
 function getLocation() {
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
-  } else {
-     console.log("Geolocation is not supported by this browser.");
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('declination') === 'true') {//user wants to do declination modification. Requires giving up location info.
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  } else{
+    document.getElementById("declination").innerHTML='Declination off. <a href="?declination=true">Enable</a>.';
+    console.log("Declination support wasn't requested by user. Append &declination=true to URL to turn it on.")
   }
 }
 
