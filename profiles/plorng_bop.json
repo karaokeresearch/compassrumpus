@@ -7,7 +7,7 @@
     "chordVolume": 0,
     "stingVolume": 15,
     "autoplay": true,
-    "autoplayms": 269,
+    "autoplayms": 145,
     "chordFileSelect": "chord_8_bit.wav",
     "stingerFileSelect": "Mallet"
   },
@@ -47,7 +47,7 @@
         "fx2_wetLevel": 0.534630539870821,
         "fx2_feedback": 1,
         "fx2_delayTimeLeft": 80,
-        "fx2_delayTimeRight": 308,
+        "fx2_delayTimeRight": 180,
         "fx2_bypass": false,
         "magneticAlignment2_wetLevel": "",
         "magneticAlignment2_feedback": "",
