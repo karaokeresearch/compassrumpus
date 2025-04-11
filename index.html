@@ -147,6 +147,35 @@ label {
   transform-origin: center center;
 }
 
+#start-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: PaleVioletRed;
+  color: white;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10vw;
+  text-align: center;
+  transition: opacity 0.5s ease;
+  text-shadow: 0.03em 0.03em 0 black; /* sharp shadow offset */
+}
+
+
+#start-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+html.wide {
+  transform: scale(0.5);
+  transform-origin: top left;
+}
+
 
     </style>
     <link rel="apple-touch-icon" sizes="180x180" href="media/apple-touch-icon.png">
@@ -155,7 +184,13 @@ label {
     <link rel="manifest" href="media/site.webmanifest">
 </head>
 <body>
-
+    <div id="start-overlay">
+        <div id="start-message">
+            <br>🧭
+            <br>TAP HERE <br>🔈🔈🔈<br>TO ACTIVATE<br>🚲
+          </div>
+          
+      </div>
     <div id="frequencyDisplay" style="color: white">
         <span id="taphere">Tap compass to start.</span>
         <span id="console" ></span>
@@ -163,7 +198,7 @@ label {
             <div class="compass-container">
                 <div class="direction-arrow">↓</div>
                 <div class="compass-display">
-                    <img id="terriblecompass" onclick="startOrientation()" src="media/bettercompass.png" alt="Compass">
+                    <img id="terriblecompass" src="media/bettercompass.png" alt="Compass">
                 </div>
                 <div id="filename"></div>
             </div>

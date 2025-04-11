@@ -701,7 +701,7 @@ if ('ontouchstart' in window) {
   
   
 } else {
-  alert("PC detected. This instrument is designed for a compass sensor on mobile browsers. But you can still use it with your mouse. Click on the compass.")
+  alert("PC detected. This instrument is designed for a mobile devices with a compass sensor. But you can still use it with your mouse, just kind-of wiggle it around.")
   letter0.addEventListener("mousedown", function() {playStinger(0);});
   letter1.addEventListener("mousedown", function() {playStinger(1);});
   letter2.addEventListener("mousedown", function() {playStinger(2);});
@@ -1346,7 +1346,8 @@ function triggerEvent(element, eventType) {
 }
 
 
-
+let randomFileName = "";
+let currentFileName = ""; // Track the currently loaded file
 
 function loadRandomProfile() {
   // Fetch the list of profile files
@@ -1354,8 +1355,18 @@ function loadRandomProfile() {
     .then(response => response.json())
     .then(data => {
       const files = data.files;
-      // Select a random file from the array
-      const randomFileName = files[Math.floor(Math.random() * files.length)];
+      
+      // If there's only one file, just use that
+      if (files.length === 1) {
+        randomFileName = files[0];
+      } else {
+        // Keep selecting random files until we find one that's different
+        do {
+          randomFileName = files[Math.floor(Math.random() * files.length)];
+        } while (randomFileName === currentFileName && files.length > 1);
+      }
+      
+      currentFileName = randomFileName; // Update the current file
 
       // Log the filename to the console and display it in the div
       console.log("Loading profile:", randomFileName);
@@ -1373,6 +1384,7 @@ function loadRandomProfile() {
       console.error('Error loading random profile:', error);
     });
 }
+
 
 // Attach the click event listener to the randomProfile button
 document.getElementById('randomProfile').addEventListener('click', loadRandomProfile);
@@ -1692,3 +1704,10 @@ function playStopTones() {
   //when that last tone plays, change #frequencyDisplay's background to FF0000
   setTimeout(function(){document.getElementById("frequencyDisplay").style.backgroundColor = "PaleVioletRed";}, .25 * toneSpacing * 1000);
 }
+
+document.getElementById('start-overlay').addEventListener('click', () => {
+  // Resume audio context (required on mobile)
+    
+    startOrientation();
+    document.getElementById('start-overlay').classList.add('fade-out');
+});
