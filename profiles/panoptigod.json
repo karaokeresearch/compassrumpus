@@ -57,7 +57,7 @@
     "fx3": {
       "effect": "Gain",
       "params": {
-        "fx3_gain": 1.80479905785367,
+        "fx3_gain": 3.4,
         "fx3_bypass": false,
         "magneticAlignment3_gain": ""
       }
