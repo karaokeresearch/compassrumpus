@@ -541,7 +541,7 @@ function handleOrientation(event) {
   // First, process the compass (alpha) values if needed.
   if (orientationPlaybackHappening == false) {
     // Compute the raw bearing using the magnetometer.
-    let computedBearing = event.webkitCompassHeading || Math.abs(event.alpha - 360);
+    let computedBearing = Math.abs(event.alpha - 360);
     computedBearing += declination;
     if (computedBearing >= 360) {
       computedBearing -= 360;
