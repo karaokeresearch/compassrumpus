@@ -692,35 +692,42 @@ const orientationButton = document.getElementById("orientationButton");
 
 
 if ('ontouchstart' in window) {
-  letter0.addEventListener("touchstart", function() {playStinger(0);});
-  letter1.addEventListener("touchstart", function() {playStinger(1);});
-  letter2.addEventListener("touchstart", function() {playStinger(2);});
-
+  // Mobile / touch devices
+  letter0.addEventListener("touchstart", () => playStinger(0));
+  letter1.addEventListener("touchstart", () => playStinger(1));
+  letter2.addEventListener("touchstart", () => playStinger(2));
   console.log("ontouchstart!");
-  
-  
-  
 } else {
-  alert("PC detected. This instrument is designed for a mobile devices with a compass sensor. But you can still use it with your mouse, just kind-of wiggle it around.")
-  letter0.addEventListener("mousedown", function() {playStinger(0);});
-  letter1.addEventListener("mousedown", function() {playStinger(1);});
-  letter2.addEventListener("mousedown", function() {playStinger(2);});
-  
-  document.addEventListener('mousemove', function(event) {
-    if (orientationPlaybackHappening==false){
-      var mouseX = event.clientX; // X coordinate of the mouse pointer
-      //let's make this into a defacto slider so you can use the instrument on PC without a compass
-      var sliderValue = mouseX / (window.innerWidth / 1000);
-      sliderValue = sliderValue % 360;
-      globalBearing=sliderValue;
-      directionChanged();
+  // PC browser detected
+  const isPcPage = window.location.pathname.endsWith("pc.html");
+  const isInIframe = window.top !== window.self;
+
+  if (!isPcPage && !isInIframe) {
+    // Redirect desktop users only if NOT already in pc.html and NOT in an iframe
+    window.location.href = "pc.html";
+  } else {
+    // Stay here (either in pc.html, or running inside iframe)
+    if (isPcPage) {
+      alert("PC detected. This instrument is designed for mobile devices with a compass sensor. But you can still use it with your mouse, just kind of wiggle it around.");
     }
-  });
-  
 
+    letter0.addEventListener("mousedown", () => playStinger(0));
+    letter1.addEventListener("mousedown", () => playStinger(1));
+    letter2.addEventListener("mousedown", () => playStinger(2));
 
-  console.log("mousedown!");
+    document.addEventListener('mousemove', event => {
+      if (!orientationPlaybackHappening) {
+        const mouseX = event.clientX;
+        const sliderValue = (mouseX / (window.innerWidth / 1000)) % 360;
+        globalBearing = sliderValue;
+        directionChanged();
+      }
+    });
+
+    console.log("mousedown!");
+  }
 }
+
 
 //set up listeners for the two range-type inputs with chorusVolume and stingVolume as their ids. Any change we will use to change volume of the chorus and stingers
 const chordVolumeId = document.getElementById("chordVolume");

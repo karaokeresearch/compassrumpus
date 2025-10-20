@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skinny Page Wrapper</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  iframe {
+    border: none;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* When the window is wider than tall, make it skinny */
+  @media (min-aspect-ratio: 1/1) {
+    iframe {
+      width: 50vw;
+      height: 100vh;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  }
+</style>
+</head>
+<body>
+  <iframe src="/index.html"></iframe>
+</body>
+</html>
